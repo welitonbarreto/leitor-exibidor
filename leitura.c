@@ -4,7 +4,6 @@
 #include "tipos.h"
 
 
-
 u1 u1Read(FILE *fd){
 	u1 toReturn = getc(fd);
 	return toReturn;
@@ -119,12 +118,12 @@ local_variable* le_local_variable_table(u2 length, FILE* fp) {
 
 attribute_info* le_attributes(constant* constantPool,u2 attributes_count,FILE *fp){
 	attribute_info* attributes = (attribute_info *) malloc(sizeof(attribute_info)*attributes_count); 
-	attribute_info* a;	
+	attribute_info* a;
+	int i = 0;
 
 	for (a = attributes; a < attributes + attributes_count;a++) {
 		
 		a->attribute_name_index = u2Read(fp);
-
 		a->attribute_length = u4Read(fp);
 
 		u1* name = constantPool[a->attribute_name_index-1].u.Utf8.bytes;
@@ -162,6 +161,9 @@ attribute_info* le_attributes(constant* constantPool,u2 attributes_count,FILE *f
 		}
 		else if (nome_u1_igual_string(name,"SourceFile",length)) {
 			a->info.SourceFile.sourcefile_index = u2Read(fp);
+		}
+		else {
+			le_vetor_u1(a->attribute_length,fp); // descartando valores desconhecidos;
 		}
 
 	}
@@ -285,7 +287,6 @@ ClassFile* le_class_file (char* arquivo_name) {
 	cf->methods = le_methods(cf->constant_pool,cf->methods_count,fp);
 	cf->attributes_count = u2Read(fp);
 	cf->attributes = le_attributes(cf->constant_pool,cf->attributes_count,fp);
-
 	fclose(fp);
 
 	return cf;

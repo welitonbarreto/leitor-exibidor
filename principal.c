@@ -34,7 +34,7 @@ void imprime_class_file(ClassFile *cf) {
 
 
 int main() {
-	ClassFile *cf = le_class_file ("teste.class");
+	ClassFile *cf = le_class_file ("classes/switchProgram.class");
 	imprime_class_file(cf);
 	libera_class_file(cf);
 }
