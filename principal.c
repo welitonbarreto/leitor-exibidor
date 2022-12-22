@@ -6,7 +6,7 @@
 #include "liberacao_mem.h"
 #include "globais.h"
 
-typedef int funcao_exibidora(u1* code,int n,int wide);
+typedef int funcao_exibidora(u1* code,int n);
 constant* constantPool;
 
 
@@ -184,7 +184,7 @@ void atribui_funcao_a_opcodes(funcao_exibidora* funcao,funcao_exibidora** vetor_
 }
 
 
-int imprime_nome_bytecode(u1* code,int n,int wide){
+int imprime_nome_bytecode(u1* code,int n){
 	printf("%d ",n);
 	printf("%s\n",tabela_nomes_instrucoes[code[n]]);
 	return n+1;
@@ -348,17 +348,19 @@ void preenche_instrucoes_sem_operandos(funcao_exibidora** vetor_funcoes){
 	atribui_funcao_a_opcodes(imprime_nome_bytecode, vetor_funcoes, lista_opcodes, 150);
 }
 
-int exibidor_index_local_variable(u1* code, int n, int wide) {
-	int index = code[n+1];
+int exibidor_index_local_variable(u1* code, int n) {
 	
-	if (wide) {
-		index = concatena_bytes(code[n+1],code[n+2]);
-	}
-
-	printf("%d ",n);
-	printf("%s %d\n",tabela_nomes_instrucoes[code[n]],index);
-
-	return n+3;
+	if ((n-1) >= 0 && code[n-1] == BYTECODE_WIDE) {
+		int index = concatena_bytes(code[n+1],code[n+2]);
+		printf("%d ",n);
+		printf("%s %d\n",tabela_nomes_instrucoes[code[n]],index);
+		return n+3;
+	} else{
+		int index = code[n+1];
+		printf("%d ",n);
+		printf("%s %d\n",tabela_nomes_instrucoes[code[n]],index);
+		return n+2;
+	}	
 }
 
 void preenche_instrucoes_index_local_variable(funcao_exibidora** vetor_funcoes) {
@@ -380,22 +382,41 @@ void preenche_instrucoes_index_local_variable(funcao_exibidora** vetor_funcoes) 
 	atribui_funcao_a_opcodes(exibidor_index_local_variable, vetor_funcoes, lista_opcodes, 11);
 }
 
-int exibidor_desvio(u1* code, int n, int wide){
-	u2 endereco_relativo_bytes = concatena_bytes(code[n+1],code[n+2]);
-	short endereco_relativo;
-	memcpy(&endereco_relativo, &endereco_relativo_bytes, 2);
-	
-	int destino = n + endereco_relativo;
 
+void imprime_nome_instrucao_e_deslocamento(u1* code, int n, int endereco_relativo){
+	int destino = n + endereco_relativo;
 	char sinal = endereco_relativo < 0 ? '-': '+';
+	
 	printf("%d ",n);
 	printf("%s %d (%c%d)\n", tabela_nomes_instrucoes[code[n]], destino, sinal, endereco_relativo);
 
+}
+
+
+int exibidor_desvio_branch_2_bytes(u1* code, int n){
+	u2 aux = concatena_bytes(code[n+1],code[n+2]);
+	short endereco_relativo;
+	memcpy(&endereco_relativo, &aux, 2);
+	imprime_nome_instrucao_e_deslocamento(code, n, endereco_relativo);
+	
 	return n+3;
 }
 
+
+
+
+
+int exibidor_desvio_branch_4_bytes(u1* code, int n) {
+	u4 aux = concatena_duas_words(concatena_bytes(code[n+1], code[n+2]), concatena_bytes(code[n+3], code[n+4]));
+	int endereco_relativo;
+	memcpy(&endereco_relativo, &aux, 4);
+	imprime_nome_instrucao_e_deslocamento(code, n, endereco_relativo);
+	return n+5;
+}
+
+
 void preenche_instrucoes_desvio(funcao_exibidora** vetor_funcoes) {
-	int lista_opcodes[18] = {
+	int lista_opcodes_branch_2_bytes[18] = {
 		BYTECODE_GOTO,
 		BYTECODE_IF_ACMPEQ,
 		BYTECODE_IF_ACMPNE,
@@ -416,12 +437,14 @@ void preenche_instrucoes_desvio(funcao_exibidora** vetor_funcoes) {
 		BYTECODE_JSR
 	};
 
-	atribui_funcao_a_opcodes(exibidor_desvio, vetor_funcoes, lista_opcodes, 18);
+	int lista_opcodes_branch_4_bytes[2] = {BYTECODE_GOTO_W, BYTECODE_JSR_W};
 
+	atribui_funcao_a_opcodes(exibidor_desvio_branch_2_bytes, vetor_funcoes, lista_opcodes_branch_2_bytes, 18);
+	atribui_funcao_a_opcodes(exibidor_desvio_branch_4_bytes, vetor_funcoes, lista_opcodes_branch_4_bytes, 2);
 }
 
 
-int exibidor_bipush(u1* code, int n, int wide){	
+int exibidor_bipush(u1* code, int n){	
 	signed char valor;
 	memcpy (&valor,&code[n+1], 1);
 
@@ -431,7 +454,7 @@ int exibidor_bipush(u1* code, int n, int wide){
 }
 
 
-int exibidor_sipush(u1* code, int n, int wide){	
+int exibidor_sipush(u1* code, int n){	
 	short valor;
 	u2 bytes = concatena_bytes(code[n+1],code[n+2]);
 	memcpy (&valor,&bytes, 2);
@@ -443,7 +466,7 @@ int exibidor_sipush(u1* code, int n, int wide){
 
 
 
-int exibidor_ldc(u1* code, int n, int wide) {
+int exibidor_ldc(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[BYTECODE_LDC],code[n+1]);	
 	printf("<");
@@ -453,7 +476,7 @@ int exibidor_ldc(u1* code, int n, int wide) {
 }
 
 
-int exibidor_ldc_w(u1* code, int n, int wide) {
+int exibidor_ldc_w(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[BYTECODE_LDC_W],concatena_bytes(code[n+1],code[n+2]));	
 	printf("<");
@@ -462,7 +485,7 @@ int exibidor_ldc_w(u1* code, int n, int wide) {
 	return n+3;
 }
 
-int exibidor_ldc2_w(u1* code, int n, int wide) {
+int exibidor_ldc2_w(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[BYTECODE_LDC2_W],concatena_bytes(code[n+1],code[n+2]));	
 	printf("<");
@@ -471,7 +494,7 @@ int exibidor_ldc2_w(u1* code, int n, int wide) {
 	return n+3;
 }
 
-int exibidor_index_do_constant_pool_com_classe(u1* code, int n, int wide) {
+int exibidor_index_do_constant_pool_com_classe(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
 	printf("<");
@@ -480,7 +503,10 @@ int exibidor_index_do_constant_pool_com_classe(u1* code, int n, int wide) {
 	return n+3;
 }
 
-int exibidor_metodo(u1* code, int n, int wide) {
+
+
+
+int exibidor_metodo(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
 	printf("<");
@@ -493,7 +519,7 @@ int exibidor_metodo(u1* code, int n, int wide) {
 	return n+3;
 }
 
-int exibidor_field(u1* code, int n, int wide) {
+int exibidor_field(u1* code, int n) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
 	printf("<");
@@ -535,7 +561,7 @@ void imprime_type_array(u1 type){
 	}
 }
 
-int exibidor_newarray(u1* code,int n, int wide) {
+int exibidor_newarray(u1* code,int n) {
 	u1 num_type = code[n+1];
 	printf("%d ",n);
 	printf("%s %d ", tabela_nomes_instrucoes[code[n]], num_type);
@@ -546,9 +572,7 @@ int exibidor_newarray(u1* code,int n, int wide) {
 
 
 
-
-
-int exibidor_multianewarray(u1* code,int n, int wide) {
+int exibidor_multianewarray(u1* code,int n) {
 	int dimensao = code[n+3];
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
@@ -558,6 +582,38 @@ int exibidor_multianewarray(u1* code,int n, int wide) {
 	return n+4;
 }
 
+
+void exibidor_iinc_wide(u1* code, int n) {
+	u2 index = concatena_bytes(code[n+1],code[n+2]);
+	short inc_short;
+	u2 aux = concatena_bytes(code[n+3],code[n+4]);
+	memcpy(&inc_short, &aux, 2);
+
+	printf("%d ",n);
+	printf("%s %d by %d\n", tabela_nomes_instrucoes[code[n]], index, inc_short);
+}
+
+void exibidor_iinc_normal(u1* code,int n) {
+	u1 index = code[n+1];
+	signed char inc_signed_byte;
+	u1 aux = code[n+2];
+	memcpy(&inc_signed_byte, &aux, 1);
+
+	printf("%d ",n);
+	printf("%s %d by %d\n", tabela_nomes_instrucoes[code[n]], index, inc_signed_byte);
+}
+
+
+int exibidor_iinc(u1* code, int n) {
+
+	if((n-1) >= 0 && code[n-1] == BYTECODE_WIDE) {
+		exibidor_iinc_wide(code, n);
+		return n+5;
+	} else{
+		exibidor_iinc_normal(code, n);
+		return n+3;
+	}
+}
 
 
 void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
@@ -572,6 +628,9 @@ void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 	vetor_funcoes[BYTECODE_INVOKESPECIAL] = exibidor_metodo;
 	vetor_funcoes[BYTECODE_INVOKESTATIC] = exibidor_metodo;
 	vetor_funcoes[BYTECODE_INVOKEVIRTUAL] = exibidor_metodo;
+	vetor_funcoes[BYTECODE_INVOKEDYNAMIC] = exibidor_metodo;
+	vetor_funcoes[BYTECODE_INVOKEINTERFACE] = exibidor_metodo;
+
 
 	vetor_funcoes[BYTECODE_GETFIELD] = exibidor_field;
 	vetor_funcoes[BYTECODE_GETSTATIC] = exibidor_field;
@@ -583,6 +642,8 @@ void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 	vetor_funcoes[BYTECODE_ANEWARRAY] = exibidor_index_do_constant_pool_com_classe;;
 	vetor_funcoes[BYTECODE_MULTIANEWARRAY] = exibidor_multianewarray;
 
+	vetor_funcoes[BYTECODE_WIDE] = imprime_nome_bytecode;
+	vetor_funcoes[BYTECODE_IINC] = exibidor_iinc;
 }
 
 
@@ -604,8 +665,6 @@ funcao_exibidora** gera_vetor_funcoes_exibidoras() {
 
 	preenche_funcoes_exibidoras(vetor_funcoes);
 
-
-
 	return vetor_funcoes;
 }
 
@@ -613,18 +672,18 @@ funcao_exibidora** gera_vetor_funcoes_exibidoras() {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/tiposLongDouble.class");
+	ClassFile *cf = le_class_file ("classes/ifsProgram.class");
 
 	method_info* array_metodos = cf->methods;
 	method_info metodo = array_metodos[3];
 	u1* code = get_code(metodo,cf->constant_pool);
 	constantPool = cf->constant_pool;
 
-	int pos_acessada = 0;
+	int pos_acessada = 5;
 	funcao_exibidora** vetor_funcoes = gera_vetor_funcoes_exibidoras();	
 	funcao_exibidora* funcao = vetor_funcoes[code[pos_acessada]];
 
-	funcao(code,pos_acessada,0);
+	funcao(code,pos_acessada);
 
 	//imprime_class_file(cf);
 	libera_class_file(cf);
