@@ -180,6 +180,7 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
 	for (cp = constantPool; cp < constantPool + (cf->constant_pool_count-1); cp++){
 		cp->tag = u1Read(fp);
 
+
 		switch(cp->tag) {
 			case CONSTANT_Class: 
           		cp->u.Class.name_index = u2Read(fp); 
@@ -204,6 +205,7 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
         		break;
         	case CONSTANT_Float:
         		cp->u.Float.bytes = u4Read(fp);
+				// printf("pego o float em %d",i);
         		break;
         	case CONSTANT_Long:
         		cp->u.Long.high_bytes = u4Read(fp);
@@ -220,10 +222,10 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
         	//Possível erro, talvez ler todo o os bytes do array;
         	case CONSTANT_Utf8:
         		cp->u.Utf8.length = u2Read(fp);
-        		cp->u.Utf8.bytes = le_vetor_u1(cp->u.Utf8.length, fp);
+        		cp->u.Utf8.bytes = le_vetor_u1(cp->u.Utf8.length, fp);				
  				break;
 			default:
-				printf("padrao\n");
+				// printf("padrao %d\n",i+1);
 				break;
 		}
 	}
@@ -269,7 +271,6 @@ field_info* le_fields(constant* constantPool,u2 length,FILE *fp) {
 
 ClassFile* le_class_file (char* arquivo_name) {
 	FILE *fp = fopen(arquivo_name,"rb");
-
 	ClassFile *cf = (ClassFile *) malloc(sizeof(ClassFile)); 
 	cf->magic = u4Read(fp);
 	cf->minor_version = u2Read(fp);	
