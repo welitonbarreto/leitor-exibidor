@@ -177,9 +177,16 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
 	constant *constantPool = (constant*) malloc(sizeof(constant)*(cf->constant_pool_count-1));
 	constant *cp;
 
-	for (cp = constantPool; cp < constantPool + (cf->constant_pool_count-1); cp++){
-		cp->tag = u1Read(fp);
+	int indice_invalido = 0;
 
+	for (cp = constantPool; cp < constantPool + (cf->constant_pool_count-1); cp++){
+		
+		if (indice_invalido) {
+			indice_invalido = 0;
+			continue;
+		}
+		
+		cp->tag = u1Read(fp);
 
 		switch(cp->tag) {
 			case CONSTANT_Class: 
@@ -210,10 +217,12 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
         	case CONSTANT_Long:
         		cp->u.Long.high_bytes = u4Read(fp);
         		cp->u.Long.low_bytes = u4Read(fp);
+				indice_invalido = 1;
         		break;
         	case CONSTANT_Double:
         		cp->u.Double.high_bytes = u4Read(fp);
         		cp->u.Double.low_bytes = u4Read(fp);
+				indice_invalido = 1;
         		break;
         	case CONSTANT_NameAndType:
         		cp->u.NameAndType.name_index = u2Read(fp);

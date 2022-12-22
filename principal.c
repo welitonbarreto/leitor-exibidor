@@ -573,7 +573,7 @@ funcao_exibidora** gera_vetor_funcoes_exibidoras() {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/arraysProgram.class");
+	ClassFile *cf = le_class_file ("classes/tiposLongDouble.class");
 
 	method_info* array_metodos = cf->methods;
 	method_info metodo = array_metodos[3];
