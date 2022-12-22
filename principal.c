@@ -23,7 +23,14 @@ void imprime_constant_utf_value(constant cp) {
 
 
 u2 concatena_bytes(u1 msb, u1 lsb) {
-	u2 result = msb << 8 | lsb;
+	u2 result = msb;
+	result = result << 8 | lsb;
+	return result;
+}
+
+u8 concatena_duas_words(u4 msw, u4 lsw) {
+	u8 result = msw;
+	result = result << 32 | lsw;
 	return result;
 }
 
@@ -65,6 +72,24 @@ void imprime_constant_string(constant constant_pool[], int index) {
 	imprime_constant_utf_value(constant_pool[string_index-1]);
 }
 
+void imprime_constant_long(constant constant_pool[], int index) {
+	long valor;
+	u8 double_word = concatena_duas_words(constant_pool[index-1].u.Long.high_bytes, constant_pool[index-1].u.Long.low_bytes); 
+	memcpy (&valor, &double_word, 8);
+
+	printf("%ld", valor);
+}
+
+void imprime_constant_double(constant constant_pool[], int index) {
+	double valor;
+
+	u8 double_word = concatena_duas_words(constant_pool[index-1].u.Double.high_bytes, constant_pool[index-1].u.Double.low_bytes);
+	memcpy (&valor, &double_word, 8);
+
+	printf("%.4f", valor);
+}
+
+
 void imprime_constant_class(constant constant_pool[], int index) {
 	if (index == 0) {
 		printf("java/lang/Object");
@@ -83,6 +108,15 @@ void imprime_valor_constant_pool_tamanho_u4(constant constant_pool[], int posica
 	} else if  (constant_pool[posicao-1].tag == CONSTANT_String) {
 		imprime_constant_string(constant_pool, posicao);
 	}
+}
+
+void imprime_valor_constant_pool_tamanho_u8(constant constant_pool[], int posicao) {
+	if (constant_pool[posicao-1].tag == CONSTANT_Long) {
+		imprime_constant_long(constant_pool, posicao);
+	} else if (constant_pool[posicao-1].tag == CONSTANT_Double) {
+		imprime_constant_double(constant_pool, posicao);
+	}
+
 }
 
 
@@ -428,6 +462,15 @@ int exibidor_ldc_w(u1* code, int n, int wide) {
 	return n+3;
 }
 
+int exibidor_ldc2_w(u1* code, int n, int wide) {
+	printf("%d ",n);
+	printf("%s #%d ", tabela_nomes_instrucoes[BYTECODE_LDC2_W],concatena_bytes(code[n+1],code[n+2]));	
+	printf("<");
+	imprime_valor_constant_pool_tamanho_u8(constantPool, concatena_bytes(code[n+1],code[n+2]));
+	printf(">\n");
+	return n+3;
+}
+
 int exibidor_index_do_constant_pool_com_classe(u1* code, int n, int wide) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
@@ -436,7 +479,6 @@ int exibidor_index_do_constant_pool_com_classe(u1* code, int n, int wide) {
 	printf(">\n");
 	return n+3;
 }
-
 
 int exibidor_metodo(u1* code, int n, int wide) {
 	printf("%d ",n);
@@ -451,7 +493,6 @@ int exibidor_metodo(u1* code, int n, int wide) {
 	return n+3;
 }
 
-
 int exibidor_field(u1* code, int n, int wide) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
@@ -464,7 +505,6 @@ int exibidor_field(u1* code, int n, int wide) {
 	printf(">\n");
 	return n+3;
 }
-
 
 void imprime_type_array(u1 type){
 	switch(type) {
@@ -494,7 +534,6 @@ void imprime_type_array(u1 type){
 			break;
 	}
 }
-
 
 int exibidor_newarray(u1* code,int n, int wide) {
 	u1 num_type = code[n+1];
@@ -526,6 +565,7 @@ void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 	vetor_funcoes[BYTECODE_SIPUSH] = exibidor_sipush;
 	vetor_funcoes[BYTECODE_LDC] = exibidor_ldc;
 	vetor_funcoes[BYTECODE_LDC_W] = exibidor_ldc_w;
+	vetor_funcoes[BYTECODE_LDC2_W] = exibidor_ldc2_w;
 	vetor_funcoes[BYTECODE_NEW] = exibidor_index_do_constant_pool_com_classe;
 	vetor_funcoes[BYTECODE_INSTANCEOF] = exibidor_index_do_constant_pool_com_classe;
 
@@ -580,7 +620,7 @@ int main() {
 	u1* code = get_code(metodo,cf->constant_pool);
 	constantPool = cf->constant_pool;
 
-	int pos_acessada = 84;
+	int pos_acessada = 0;
 	funcao_exibidora** vetor_funcoes = gera_vetor_funcoes_exibidoras();	
 	funcao_exibidora* funcao = vetor_funcoes[code[pos_acessada]];
 
