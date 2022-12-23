@@ -28,6 +28,14 @@ u2 concatena_bytes(u1 msb, u1 lsb) {
 	return result;
 }
 
+
+u4 concatena_duas_half_words(u2 msh, u2 lsh) {
+	u4 result = msh;
+	result = result << 16 | lsh;
+	return result;
+
+}
+
 u8 concatena_duas_words(u4 msw, u4 lsw) {
 	u8 result = msw;
 	result = result << 32 | lsw;
@@ -407,7 +415,7 @@ int exibidor_desvio_branch_2_bytes(u1* code, int n){
 
 
 int exibidor_desvio_branch_4_bytes(u1* code, int n) {
-	u4 aux = concatena_duas_words(concatena_bytes(code[n+1], code[n+2]), concatena_bytes(code[n+3], code[n+4]));
+	u4 aux = concatena_duas_half_words(concatena_bytes(code[n+1], code[n+2]), concatena_bytes(code[n+3], code[n+4]));
 	int endereco_relativo;
 	memcpy(&endereco_relativo, &aux, 4);
 	imprime_nome_instrucao_e_deslocamento(code, n, endereco_relativo);
@@ -616,6 +624,58 @@ int exibidor_iinc(u1* code, int n) {
 }
 
 
+
+int le_inteiro_from_code(u1* code, int x){
+
+	//printf("%d  esse eh x\n", x);
+	int valor = 0;
+	u4 aux = concatena_duas_half_words(concatena_bytes(code[x], code[x+1]), concatena_bytes(code[x+2], code[x+3]));
+	memcpy(&valor, &aux, 4);
+	return valor;
+}
+
+
+
+void imprime_off_sets_do_switch(u1*code, int posicao_offsets, int quantidade, int inicio_switch){
+	int posicao_atual = posicao_offsets;
+	int i = 0;
+	
+
+	for(i = 0; i < quantidade; i++) {
+		int offset = le_inteiro_from_code(code, posicao_atual);
+		char sinal = offset < 0 ? '-': '+';
+		printf("%d: %d  (%c%d) \n", i, inicio_switch + offset, sinal, abs(offset));
+		posicao_atual = posicao_atual + 4;
+	}
+
+}
+
+void imprime_default_do_switch(int padrao, int inicio){
+	char sinalSoma = padrao+inicio < 0 ? '-': '+';
+	char sinalPadrao = padrao < 0 ? '-': '+';
+	printf("default: %c%d (%c%d)\n", sinalSoma, abs(padrao+inicio), sinalPadrao, abs(padrao));
+}
+
+
+int exibidor_table_switch(u1* code, int n) {
+	int k = 4 - (n % 4);    // numero de bytes  de preenchimento
+	int padrao = le_inteiro_from_code(code,n+k);
+	int low = le_inteiro_from_code(code,n+k+4);
+	
+	int high = le_inteiro_from_code(code,n+k+8);
+
+	int quantidade_offsets = high - low + 1;
+	int inicio_offsets = n+k+12;
+
+
+	printf("%d ",n);
+	printf("%s %d to %d:\n", tabela_nomes_instrucoes[code[n]],low, high);
+	imprime_off_sets_do_switch(code, inicio_offsets, quantidade_offsets, n);
+	imprime_default_do_switch(padrao,n);
+	return inicio_offsets + quantidade_offsets*4;
+}
+
+
 void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 	vetor_funcoes[BYTECODE_BIPUSH] = exibidor_bipush;
 	vetor_funcoes[BYTECODE_SIPUSH] = exibidor_sipush;
@@ -624,6 +684,7 @@ void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 	vetor_funcoes[BYTECODE_LDC2_W] = exibidor_ldc2_w;
 	vetor_funcoes[BYTECODE_NEW] = exibidor_index_do_constant_pool_com_classe;
 	vetor_funcoes[BYTECODE_INSTANCEOF] = exibidor_index_do_constant_pool_com_classe;
+	vetor_funcoes[BYTECODE_CHECKCAST] = exibidor_index_do_constant_pool_com_classe;
 
 	vetor_funcoes[BYTECODE_INVOKESPECIAL] = exibidor_metodo;
 	vetor_funcoes[BYTECODE_INVOKESTATIC] = exibidor_metodo;
@@ -644,6 +705,10 @@ void preenche_instrucoes_especificas(funcao_exibidora** vetor_funcoes) {
 
 	vetor_funcoes[BYTECODE_WIDE] = imprime_nome_bytecode;
 	vetor_funcoes[BYTECODE_IINC] = exibidor_iinc;
+
+
+	vetor_funcoes[BYTECODE_TABLESWITCH] = exibidor_table_switch;
+
 }
 
 
@@ -673,18 +738,17 @@ funcao_exibidora** gera_vetor_funcoes_exibidoras() {
 int main() {
 
 	ClassFile *cf = le_class_file ("classes/ifsProgram.class");
-
 	method_info* array_metodos = cf->methods;
 	method_info metodo = array_metodos[3];
 	u1* code = get_code(metodo,cf->constant_pool);
 	constantPool = cf->constant_pool;
 
-	int pos_acessada = 5;
+	int pos_acessada = 26;
 	funcao_exibidora** vetor_funcoes = gera_vetor_funcoes_exibidoras();	
 	funcao_exibidora* funcao = vetor_funcoes[code[pos_acessada]];
 
-	funcao(code,pos_acessada);
-
+	int n = funcao(code,pos_acessada);
+	printf("%d",n);
 	//imprime_class_file(cf);
 	libera_class_file(cf);
 }
