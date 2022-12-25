@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "leitura.h"
-#include "tipos.h"
 
 
 u1 u1Read(FILE *fd){
@@ -19,17 +16,6 @@ u4 u4Read(FILE *fd) {
 	u4 toReturn = u2Read(fd);
 	toReturn = (toReturn << 16) | u2Read(fd);
 	return toReturn;
-}
-
-
-int nome_u1_igual_string(u1* vetor,char* str,int length) {
-	for(int i = 0;i < length;i++){
-		if (vetor[i] != str[i]){
-			return 0;
-		}
-	}
-
-	return 1;
 }
 
 

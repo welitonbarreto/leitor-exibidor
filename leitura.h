@@ -3,6 +3,9 @@
 
 #include "tipos.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "utilitarios.h"
+
 
 u1 u1Read(FILE *fd);
 u2 u2Read(FILE *fd);

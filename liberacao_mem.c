@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "leitura.h"
 
+
 void libera_attributes (constant* constantPool, attribute_info* attributes, u2 attributes_count) {
 	attribute_info* a;	
 

@@ -216,5 +216,7 @@ typedef struct{
 } ClassFile;
 
 
+typedef int funcao_exibidora(u1* code,int n, constant constant_pool[]);
+
 #endif
 
