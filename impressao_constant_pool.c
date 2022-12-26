@@ -186,7 +186,7 @@ void imprime_constant_methodref_info(constant constant_pool[], int posicao) {
 	int index_class = constant_pool[posicao-1].u.Methodref.class_index;
 	int index_name_and_type = constant_pool[posicao-1].u.Methodref.name_and_type_index;
 	
-	printf("\t\tName and type: cp_info #%d ", index_class);
+	printf("\t\tClass name: cp_info #%d ", index_class);
 	imprime_campo_utf8_entre_colchetes(constant_pool, constant_pool[index_class-1].u.Class.name_index, "ClassName");
 	printf("\n");
 	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
@@ -198,7 +198,7 @@ void imprime_constant_interfacemethodref_info(constant constant_pool[], int posi
 	int index_class = constant_pool[posicao-1].u.InterfaceMethodRef.class_index;
 	int index_name_and_type = constant_pool[posicao-1].u.InterfaceMethodRef.name_and_type_index;
 	
-	printf("\t\tName and type: cp_info #%d ", index_class);
+	printf("\t\tClass name: cp_info #%d ", index_class);
 	imprime_campo_utf8_entre_colchetes(constant_pool, constant_pool[index_class-1].u.Class.name_index, "ClassName");
 	printf("\n");
 	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
