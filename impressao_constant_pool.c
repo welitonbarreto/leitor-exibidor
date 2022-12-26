@@ -116,3 +116,207 @@ void imprime_constant_field_descriptor(constant constant_pool[], int posicao){
 
 	imprime_constant_utf_value(constant_pool[descriptor_index-1]);
 }
+
+
+
+
+
+void imprime_constant_utf_8_info(constant constant_pool[], int posicao) {
+	printf("\t\tLength of the bytes array: %d\n", constant_pool[posicao-1].u.Utf8.length);
+	printf("\t\tLength of the string: %d\n", constant_pool[posicao-1].u.Utf8.length);
+	printf("\t\t String: ");
+	imprime_constant_utf_value(constant_pool[posicao-1]);
+	printf("\n");
+}
+
+
+
+void imprime_campo_utf8_entre_colchetes(constant constant_pool[], int index_utf8, char nome_campo[]) {
+	constant constant_utf8 = constant_pool[index_utf8-1];
+	printf("<");
+	imprime_constant_utf_value(constant_utf8);
+	printf(">");
+}
+
+
+void imprime_constant_class_info(constant constant_pool[], int posicao){
+	int index_utf8 = constant_pool[posicao-1].u.Class.name_index;
+	printf("\t\tClass name: cp_info #%d ", index_utf8);
+	imprime_campo_utf8_entre_colchetes(constant_pool, index_utf8, "Class name");
+	printf("\n");
+} 
+
+
+void imprime_constant_name_and_type_info(constant constant_pool[], int posicao) {
+	int name_index = constant_pool[posicao-1].u.NameAndType.name_index;
+	int descriptor_index = constant_pool[posicao-1].u.NameAndType.descriptor_index;
+	
+	printf("\t\tClass name: cp_info #%d ", name_index);
+	imprime_campo_utf8_entre_colchetes(constant_pool, name_index, "Name");
+	printf("\n");
+	printf("\t\tClass name: cp_info #%d ", descriptor_index);
+	imprime_campo_utf8_entre_colchetes(constant_pool, descriptor_index, "Descriptor");
+	printf("\n");
+}
+
+void imprime_name_and_type_em_uma_linha(constant constant_pool[], int posicao) {
+	int name_index = constant_pool[posicao-1].u.NameAndType.name_index;
+	int descriptor_index = constant_pool[posicao-1].u.NameAndType.descriptor_index;
+	
+	imprime_constant_utf_value(constant_pool[name_index-1]);
+	printf(":");
+	imprime_constant_utf_value(constant_pool[descriptor_index-1]);
+}
+
+void imprime_constant_fieldref_info(constant constant_pool[], int posicao) {
+	int index_class = constant_pool[posicao-1].u.Fieldref.class_index;
+	int index_name_and_type = constant_pool[posicao-1].u.Fieldref.name_and_type_index;
+	
+	printf("\t\tName and type: cp_info #%d ", index_class);
+	imprime_campo_utf8_entre_colchetes(constant_pool, constant_pool[index_class-1].u.Class.name_index, "ClassName");
+	printf("\n");
+	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
+	imprime_name_and_type_em_uma_linha(constant_pool, index_name_and_type);
+	printf(">\n");
+}
+
+
+
+void imprime_constant_methodref_info(constant constant_pool[], int posicao) {
+	int index_class = constant_pool[posicao-1].u.Methodref.class_index;
+	int index_name_and_type = constant_pool[posicao-1].u.Methodref.name_and_type_index;
+	
+	printf("\t\tName and type: cp_info #%d ", index_class);
+	imprime_campo_utf8_entre_colchetes(constant_pool, constant_pool[index_class-1].u.Class.name_index, "ClassName");
+	printf("\n");
+	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
+	imprime_name_and_type_em_uma_linha(constant_pool, index_name_and_type);
+	printf(">\n");
+}
+
+void imprime_constant_interfacemethodref_info(constant constant_pool[], int posicao) {
+	int index_class = constant_pool[posicao-1].u.InterfaceMethodRef.class_index;
+	int index_name_and_type = constant_pool[posicao-1].u.InterfaceMethodRef.name_and_type_index;
+	
+	printf("\t\tName and type: cp_info #%d ", index_class);
+	imprime_campo_utf8_entre_colchetes(constant_pool, constant_pool[index_class-1].u.Class.name_index, "ClassName");
+	printf("\n");
+	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
+	imprime_name_and_type_em_uma_linha(constant_pool, index_name_and_type);
+	printf(">\n");
+}
+
+void imprime_constant_long_info(constant constant_pool[], int posicao) {
+	u4 low_bytes = constant_pool[posicao-1].u.Long.low_bytes;
+	u4 high_bytes = constant_pool[posicao-1].u.Long.high_bytes;
+	printf("\t\tHigh Bytes 0x%08x\n", high_bytes);
+	printf("\t\tLow Bytes 0x%08x\n", low_bytes);
+	printf("\t\tLong: ");
+	imprime_constant_long(constant_pool, posicao);
+	printf("\n");
+}
+
+void imprime_constant_double_info(constant constant_pool[], int posicao) {
+	u4 low_bytes = constant_pool[posicao-1].u.Double.low_bytes;
+	u4 high_bytes = constant_pool[posicao-1].u.Double.high_bytes;
+	printf("\t\tHigh Bytes 0x%08x\n", high_bytes);
+	printf("\t\tLow Bytes 0x%08x\n", low_bytes);
+	printf("\t\tDouble: ");
+	imprime_constant_double(constant_pool, posicao);
+	printf("\n");
+}
+
+void imprime_constant_integer_info(constant constant_pool[], int posicao) {
+	u4 bytes = constant_pool[posicao-1].u.Integer.bytes;
+	printf("\t\tBytes 0x%08x\n", bytes);
+	printf("\t\tInteger: ");
+	imprime_constant_integer(constant_pool, posicao);
+	printf("\n");
+}
+
+
+void imprime_constant_float_info(constant constant_pool[], int posicao) {
+	u4 bytes = constant_pool[posicao-1].u.Float.bytes;
+	printf("\t\tBytes 0x%08x\n", bytes);
+	printf("\t\tFloat: ");
+	imprime_constant_float(constant_pool, posicao);
+	printf("\n");
+}
+
+
+void imprime_constant_string_info(constant constant_pool[], int posicao) {
+	int index_utf8 = constant_pool[posicao-1].u.String.string_index;
+	printf("\t\tString: cp_info #%d ", index_utf8);
+	imprime_campo_utf8_entre_colchetes(constant_pool, index_utf8, "String");
+	printf("\n");
+}
+
+int eh_posicao_invalida(constant constant_pool[], int posicao){
+	u1 tag = constant_pool[posicao-2].tag; 
+	if ((tag == CONSTANT_Double) || (tag == CONSTANT_Long)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+void navegacao_constant_pool(constant constant_pool[]) {
+	int posicao;
+	scanf("%d", &posicao);
+
+	if(eh_posicao_invalida(constant_pool, posicao)){
+		printf("\tlarge numeric continued\n");
+		return; // Parte a ser modificada
+	}
+
+	switch(constant_pool[posicao-1].tag) {
+			case CONSTANT_Class:
+				printf("\tConstant_Class_info\n");
+				imprime_constant_class_info(constant_pool, posicao);
+          		break; 
+       		case CONSTANT_Fieldref:
+				printf("\tConstant_Fieldref_info\n");
+				imprime_constant_fieldref_info(constant_pool, posicao);
+        		break; 
+        	case CONSTANT_Methodref:
+				printf("\tConstant_Methodref_info\n");
+				imprime_constant_methodref_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_InterfaceMethodref:
+				printf("\tConstant_InterfaceMethodref_info\n");
+				imprime_constant_interfacemethodref_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_String:
+				printf("\tConstant_String_info\n");
+				imprime_constant_string_info(constant_pool, posicao);	
+        		break;
+        	case CONSTANT_Integer:
+				printf("\tConstant_Integer_info\n");
+				imprime_constant_integer_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_Float:
+				printf("\tConstant_Float_info\n");
+				imprime_constant_float_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_Long:
+				printf("\tConstant_Long_info\n");
+				imprime_constant_long_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_Double:
+				printf("\tConstant_Double_info\n");
+				imprime_constant_double_info(constant_pool, posicao);
+        		break;
+        	case CONSTANT_NameAndType:
+				printf("\tConstant_NameAndType_info\n");
+				imprime_constant_name_and_type_info(constant_pool, posicao);
+        		break;	
+        	case CONSTANT_Utf8:
+				printf("\tConstant_utf_8_info\n");
+				imprime_constant_utf_8_info(constant_pool, posicao); 
+ 				break;
+			default:
+				// printf("padrao %d\n",i+1);
+				break;
+	}
+}
+

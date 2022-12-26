@@ -6,7 +6,7 @@
 #include <string.h>
 #include "utilitarios.h"
 
-
+void navegacao_constant_pool(constant constant_pool[]); 
 void imprime_constant_utf_value(constant cp);
 void imprime_constant_integer(constant constant_pool[], int index);
 void imprime_constant_float(constant constant_pool[], int index);

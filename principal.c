@@ -29,8 +29,8 @@ void imprime_class_file(ClassFile *cf) {
 
 int main() {
 
-
-	
+	ClassFile *cf = le_class_file ("classes/tiposLongDouble.class");
+	navegacao_constant_pool(cf->constant_pool);
 	//imprime_code_from_method(metodo, cf->constant_pool);
 	//imprime_class_file(cf);
 	libera_class_file(cf);
