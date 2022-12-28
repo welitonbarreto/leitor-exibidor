@@ -8,6 +8,7 @@
 #include "mapeamento_instrucoes_code.h"
 #include "utilitarios.h"
 #include "navegacao_methods.h"
+#include "impressao_interfaces.h"
 
 
 
@@ -29,8 +30,10 @@ void imprime_class_file(ClassFile *cf) {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/InvokeExamples.class");
-	navegacao_constant_pool(cf->constant_pool);
+	ClassFile *cf = le_class_file ("classes/TesteDeprecated.class");
+	//navegacao_nas_interfaces(cf->interfaces, cf->interfaces_count, cf->constant_pool);
+	//navegacao_do_constant_pool(cf->constant_pool, cf->constant_pool_count);
+	navegacao_dos_methods(cf->methods, cf->methods_count, cf->constant_pool);
 	//imprime_code_from_method(metodo, cf->constant_pool);
 	//imprime_class_file(cf);
 	libera_class_file(cf);

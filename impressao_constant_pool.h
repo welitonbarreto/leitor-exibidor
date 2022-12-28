@@ -6,7 +6,7 @@
 #include <string.h>
 #include "utilitarios.h"
 
-void navegacao_constant_pool(constant constant_pool[]); 
+void navegacao_do_constant_pool(constant constant_pool[], u2 constant_pool_count); 
 void imprime_constant_utf_value(constant cp);
 void imprime_constant_integer(constant constant_pool[], int index);
 void imprime_constant_float(constant constant_pool[], int index);
@@ -22,6 +22,7 @@ void imprime_constant_method_descriptor(constant constant_pool[], int posicao);
 void imprime_constant_field_class_name(constant constant_pool[], int posicao); 
 void imprime_constant_field_name(constant constant_pool[], int posicao);
 void imprime_constant_field_descriptor(constant constant_pool[], int posicao);
+void imprime_campo_utf8_entre_colchetes(constant constant_pool[], int index_utf8);
 
 
 #endif

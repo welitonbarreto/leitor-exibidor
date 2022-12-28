@@ -32,3 +32,60 @@ int nome_u1_igual_string(u1* vetor,char* str,int length) {
 }
 
 
+void limpa_tela() {
+	#ifdef __linux__ 
+		system("clear");
+	#elif _WIN32
+		system("cls");
+	#else
+
+	#endif
+}
+
+
+void flush_in() {
+    int ch;
+    do {
+        ch = fgetc(stdin);
+    } while (ch != EOF && ch != '\n');
+}
+
+
+int le_inteiro() {
+	int inteiro;
+
+	scanf("%d", &inteiro);
+	flush_in();
+
+	return inteiro;
+}
+
+
+int menor(int i1, int i2) {
+	if(i1 <= i2) {
+		return i1;
+	}
+
+	return i2;
+}
+
+
+
+void imprime_espacos_vazios(int qtd) {
+	for(int i = 0; i < qtd;i++){
+		printf(" ");
+	}
+}
+
+
+
+int tamanho_lexicografico_inteiro(int inteiro) {
+	char buffer_str[10];
+	sprintf(buffer_str,"%d", inteiro);
+
+	return strlen(buffer_str);
+}
+
+void imprime_linha() {
+	printf("----------------------------------------------------------------------------");
+}
