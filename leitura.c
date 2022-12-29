@@ -219,6 +219,17 @@ void leConstantPool(ClassFile *cf,FILE *fp) {
         		cp->u.Utf8.length = u2Read(fp);
         		cp->u.Utf8.bytes = le_vetor_u1(cp->u.Utf8.length, fp);				
  				break;
+			case CONSTANT_MethodHandle:
+				cp->u.MethodHandle.reference_kind = u1Read(fp);
+				cp->u.MethodHandle.reference_index = u2Read(fp);
+				break;
+			case CONSTANT_MethodType:
+				cp->u.MethodType.descriptor_index = u2Read(fp);
+				break;
+			case CONSTANT_InvokeDynamic:
+				cp->u.InvokeDynamic.bootstrap_method_attr_index = u2Read(fp);
+				cp->u.InvokeDynamic.name_and_type_index = u2Read(fp);
+				break;
 			default:
 				// printf("padrao %d\n",i+1);
 				break;

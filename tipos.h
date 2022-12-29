@@ -23,6 +23,12 @@
 #define CONSTANT_Double 6
 #define CONSTANT_NameAndType 12
 #define CONSTANT_Utf8 1
+#define CONSTANT_MethodHandle 15
+#define CONSTANT_MethodType 16
+#define CONSTANT_InvokeDynamic 18
+
+
+
 
 typedef unsigned char u1;
 typedef unsigned short u2;
@@ -84,6 +90,20 @@ typedef struct{
             u4 high_bytes;
             u4 low_bytes;
         } Double;
+
+        struct {
+            u1 reference_kind;
+            u2 reference_index;
+        } MethodHandle;
+
+        struct {
+            u2 descriptor_index;
+        } MethodType;
+
+        struct {
+            u2 bootstrap_method_attr_index;
+            u2 name_and_type_index;
+        } InvokeDynamic;
     }u;
 } constant;
 

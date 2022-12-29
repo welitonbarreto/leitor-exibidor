@@ -24,5 +24,4 @@ void imprime_constant_field_name(constant constant_pool[], int posicao);
 void imprime_constant_field_descriptor(constant constant_pool[], int posicao);
 void imprime_campo_utf8_entre_colchetes(constant constant_pool[], int index_utf8);
 
-
 #endif

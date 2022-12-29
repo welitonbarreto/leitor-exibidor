@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "string.h"
 #include "stdio.h"
+#include "impressao_constant_pool.h"
 
 
 u2 concatena_bytes(u1 msb, u1 lsb);
@@ -17,4 +18,8 @@ int menor(int i1, int i2);
 void imprime_espacos_vazios(int qtd);
 int tamanho_lexicografico_inteiro(int inteiro);
 void imprime_linha();
+void imprime_numero_em_tabela(char nome_coluna[], int num);
+void imprime_utf8_em_tabela(int limite_caracteres, constant constant_pool[], int index);
+void imprime_generic_info_from_atribute(attribute_info attr, constant constant_pool[]);
+void imprime_class_em_tabela(int limite_caracteres, constant constant_pool[], int index);
 #endif

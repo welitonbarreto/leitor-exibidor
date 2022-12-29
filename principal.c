@@ -9,6 +9,7 @@
 #include "utilitarios.h"
 #include "navegacao_methods.h"
 #include "impressao_interfaces.h"
+#include "navegacao_attributes.h"
 
 
 
@@ -27,13 +28,54 @@ void imprime_class_file(ClassFile *cf) {
 }
 
 
+void imprime_contexto_principal() {
+	printf("[1] General information\n");
+	printf("[2] Constant Pool\n");
+	printf("[3] Interfaces\n");
+	printf("[4] Fields\n");
+	printf("[5] Methods\n");
+	printf("[6] Attributes\n");
+}
+
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/TesteDeprecated.class");
+	ClassFile *cf = le_class_file ("classes/TesteInnerClasses.class");
+	int acao;
+
+	do {
+		limpa_tela();
+		imprime_contexto_principal();
+		acao = le_inteiro();
+
+		switch (acao) {
+			case(1):
+				break;
+
+			case(2):
+				navegacao_do_constant_pool(cf->constant_pool, cf->constant_pool_count);
+				break;
+
+			case(3):
+				break;
+
+			case(5):
+				navegacao_dos_methods(cf->methods, cf->methods_count, cf->constant_pool);
+				break;
+
+			case(6):
+				navega_nos_attributes(cf->attributes, cf->attributes_count, cf->constant_pool);
+				break;
+		}
+	} while(acao != -1);
+
+
+
+
+
 	//navegacao_nas_interfaces(cf->interfaces, cf->interfaces_count, cf->constant_pool);
-	//navegacao_do_constant_pool(cf->constant_pool, cf->constant_pool_count);
-	navegacao_dos_methods(cf->methods, cf->methods_count, cf->constant_pool);
+	//
+	
 	//imprime_code_from_method(metodo, cf->constant_pool);
 	//imprime_class_file(cf);
 	libera_class_file(cf);

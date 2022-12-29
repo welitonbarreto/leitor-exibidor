@@ -17,8 +17,6 @@
 #define ACAO_MISC -4
 
 
-
-u1* get_instrucoes_from_method(method_info metodo, constant constant_pool[]);
 void imprime_code_from_method(method_info metodo, constant constant_pool[]);
 void navegacao_dos_methods(method_info methods[], u2 methods_count, constant constant_pool[]);
 void imprime_contexto_navegacao_methods();

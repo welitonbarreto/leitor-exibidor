@@ -1,79 +1,6 @@
 #include "navegacao_methods.h"
 
 
-void imprime_numero_em_tabela(char nome_coluna[], int num) {
-	printf("||%d", num);
-	imprime_espacos_vazios(strlen(nome_coluna)-tamanho_lexicografico_inteiro(num));
-}
-
-void imprime_utf8_em_tabela(int limite_caracteres, constant constant_pool[], int index) {
-	constant utf8_constant = constant_pool[index-1];
-	u2 tamanho_utf8 = utf8_constant.u.Utf8.length;
-
-	limite_caracteres = limite_caracteres - (strlen("cp_info # ")+tamanho_lexicografico_inteiro(index));
-	printf("||cp_info #%d ", index);
-	
-	u1* b;
-	int mask = 128;
-
-	for (b = utf8_constant.u.Utf8.bytes; b < utf8_constant.u.Utf8.bytes + menor(tamanho_utf8, limite_caracteres-3); b++){
-		if ((*b & mask) == 0){ // ou seja, primeiro bit = 0
-			printf("%c",*b);
-		}	
-	}
-	
-	if(utf8_constant.u.Utf8.length >= limite_caracteres-3){
-		printf("...");
-	} else {
-		imprime_espacos_vazios(limite_caracteres - tamanho_utf8);
-	}
-}
-
-exception* get_exception_table_from_method_code(method_info metodo, constant constant_pool[]) {
-	attribute_info* a;
-
-	for (a = metodo.attributes; a < metodo.attributes + metodo.attributes_count;a++) {
-
-		u1* name = constant_pool[a->attribute_name_index-1].u.Utf8.bytes;
-		u2 length = constant_pool[a->attribute_name_index-1].u.Utf8.length;
-		
-		if (nome_u1_igual_string(name,"Code", length)) {
-			return a->info.Code.exception_table;
-		}
-	}
-}
-
-u4 get_quantidade_instrucoes(method_info metodo, constant constant_pool[]) {
-	attribute_info* a;
-
-	for (a = metodo.attributes; a < metodo.attributes + metodo.attributes_count;a++) {
-
-		u1* name = constant_pool[a->attribute_name_index-1].u.Utf8.bytes;
-		u2 length = constant_pool[a->attribute_name_index-1].u.Utf8.length;
-		
-		if (nome_u1_igual_string(name,"Code", length)) {
-			return a->info.Code.code_length;
-		}
-	}
-
-}
-
-attribute_info get_attribute_info_from_method(method_info metodo, constant constant_pool[], char nome_attributo[]) {
-	attribute_info* a;
-
-	for (a = metodo.attributes; a < metodo.attributes + metodo.attributes_count;a++) {
-
-		u1* name = constant_pool[a->attribute_name_index-1].u.Utf8.bytes;
-		u2 length = constant_pool[a->attribute_name_index-1].u.Utf8.length;
-		
-		if (nome_u1_igual_string(name, nome_attributo, length)) {
-			return *a;
-		}
-	}
-
-
-}
-
 void imprime_instrucoes_bytecodes(u1* code, u4 code_length, constant constant_pool[]){
 
 	int posicao = 0;
@@ -114,14 +41,6 @@ void imprime_contexto_navegacao_code(attribute_info attr_code, u2 num_attr_code,
 
 }
 
-void imprime_generic_info_from_atribute(attribute_info attr, constant constant_pool[]) {
-	printf("\nGeneric Info\n");
-	printf("Attribute name index: cp_info #%d ", attr.attribute_name_index);
-	imprime_campo_utf8_entre_colchetes(constant_pool, attr.attribute_name_index);
-	printf("\n");
-	printf("Atribute length: %d\n", attr.attribute_length);
-
-}
 
 void imprime_contexto_navegacao_local_variable_table(attribute_info attr_local_var, u2 num_attr_local_var, attribute_info attr_code, u2 num_attr_code,
 												  method_info metodo_pai, u2 num_metodo, constant constant_pool[])
@@ -165,10 +84,7 @@ void imprime_specific_info_from_local_var_table(local_variable local_variable_ta
 
 void imprime_informacoes_local_variable(attribute_info attr_local_var, u2 num_attr_code, constant constant_pool[]) {
 	printf("\n");
-	imprime_linha();
 	imprime_generic_info_from_atribute(attr_local_var, constant_pool);
-	
-	imprime_linha();
 	imprime_specific_info_from_local_var_table(attr_local_var.info.LocalVariableTable.local_variable_table, 
 											   attr_local_var.info.LocalVariableTable.local_variable_table_length,
 											   constant_pool);
@@ -232,10 +148,7 @@ void imprime_specific_info_from_line_number_table(line_number line_number_table[
 
 void imprime_informacoes_line_number_table(attribute_info attr_line_number_tab, constant constant_pool[]) {
 	printf("\n");
-	imprime_linha();
 	imprime_generic_info_from_atribute(attr_line_number_tab, constant_pool);
-	
-	imprime_linha();
 	imprime_specific_info_from_line_number_table(attr_line_number_tab.info.LineNumberTable.line_number_table, 
 											   attr_line_number_tab.info.LineNumberTable.line_number_table_length,
 											   constant_pool);
@@ -292,10 +205,7 @@ void imprime_specific_info_from_code(attribute_info attr_code, constant constant
 
 void imprime_informacoes_code(attribute_info attr_code, u2 num_attr_code, constant constant_pool[], int acao) {
 	printf("\n");
-	imprime_linha();
 	imprime_generic_info_from_atribute(attr_code, constant_pool);
-	
-	imprime_linha();
 	imprime_specific_info_from_code(attr_code, constant_pool, acao);
 	imprime_linha();
 	printf("\n");
@@ -417,11 +327,7 @@ void imprime_specific_info_from_exceptions(u2* exception_index_table, u2 length,
 
 void imprime_informacoes_exceptions(attribute_info attr_except, u2 num_attr_except, constant constant_pool[]) {
 	printf("\n");
-	imprime_linha();
 	imprime_generic_info_from_atribute(attr_except, constant_pool);
-	
-	imprime_linha();
-	printf("\n");
 	imprime_specific_info_from_exceptions(attr_except.info.Exceptions.exception_index_table,
 										 attr_except.info.Exceptions.number_of_exceptions, constant_pool);
 	imprime_linha();
@@ -530,13 +436,3 @@ void navegacao_dos_methods(method_info methods[], u2 methods_count, constant con
 
 	}while(acao != -1);
 }
-
-
-
-
-
-
-
-
-
-

@@ -89,3 +89,61 @@ int tamanho_lexicografico_inteiro(int inteiro) {
 void imprime_linha() {
 	printf("----------------------------------------------------------------------------");
 }
+
+
+
+void imprime_numero_em_tabela(char nome_coluna[], int num) {
+	printf("||%d", num);
+	imprime_espacos_vazios(strlen(nome_coluna)-tamanho_lexicografico_inteiro(num));
+}
+
+
+
+void imprime_utf8_com_limite_caracteres(int limite_caracteres, constant constant_pool[], int index) {
+	constant utf8_constant = constant_pool[index-1];
+	u2 tamanho_utf8 = utf8_constant.u.Utf8.length;
+
+	u1* b;
+	int mask = 128;
+
+	for (b = utf8_constant.u.Utf8.bytes; b < utf8_constant.u.Utf8.bytes + menor(tamanho_utf8, limite_caracteres-3); b++){
+		if ((*b & mask) == 0){ // ou seja, primeiro bit = 0
+			printf("%c",*b);
+		}	
+	}
+	
+
+	if(utf8_constant.u.Utf8.length > limite_caracteres-3){
+		printf("...");
+	} else {
+		imprime_espacos_vazios(limite_caracteres - tamanho_utf8);
+	}
+}
+
+
+void imprime_class_em_tabela(int limite_caracteres, constant constant_pool[], int index) {
+	limite_caracteres = limite_caracteres - (strlen("cp_info # ")+tamanho_lexicografico_inteiro(index));
+	printf("||cp_info #%d ", index);
+	imprime_utf8_com_limite_caracteres(limite_caracteres, constant_pool, constant_pool[index-1].u.Class.name_index);
+}
+
+void imprime_utf8_em_tabela(int limite_caracteres, constant constant_pool[], int index) {
+	limite_caracteres = limite_caracteres - (strlen("cp_info # ")+tamanho_lexicografico_inteiro(index));
+	printf("||cp_info #%d ", index);
+
+	imprime_utf8_com_limite_caracteres(limite_caracteres, constant_pool, index);
+
+}
+
+
+
+void imprime_generic_info_from_atribute(attribute_info attr, constant constant_pool[]) {
+	imprime_linha();
+	printf("\nGeneric Info\n");
+	printf("Attribute name index: cp_info #%d ", attr.attribute_name_index);
+	imprime_campo_utf8_entre_colchetes(constant_pool, attr.attribute_name_index);
+	printf("\n");
+	printf("Atribute length: %d\n", attr.attribute_length);
+	imprime_linha();
+	printf("\n");
+}
