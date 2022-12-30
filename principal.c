@@ -1,32 +1,75 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "tipos.h"
-#include "leitura.h"
-#include "liberacao_mem.h"
-#include "funcoes_exibicao_code.h"
-#include "mapeamento_instrucoes_code.h"
-#include "utilitarios.h"
-#include "navegacao_methods.h"
-#include "impressao_interfaces.h"
-#include "navegacao_attributes.h"
-#include "navegacao_fields.h"
+#include "principal.h"
 
+
+void imprime_descricao_class_flags(u2 access_flags) {
+	printf("[");
+	int total_flags = 0;
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_PUBLIC, "public", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_FINAL, "final", total_flags);
+	//total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_SUPER, "super", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_INTERFACE, "interface", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_ABSTRACT, "abstract", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_SYNTHETIC, "synthetic", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_ANNOTATION, "annotation", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, CLASS_MASK_ACC_ENUM, "enum", total_flags);
+
+
+	printf("]");
+}
 
 
 
 void imprime_class_file(ClassFile *cf) {
-	printf("minor_version: %d\n",cf->minor_version);
-	printf("major_version: %d\n",cf->major_version);
-	printf("constant_pool_count: %d\n",cf->constant_pool_count);
-	printf("access_flags: 0x%04x\n",cf->access_flags);
-	printf("this_class: %d\n",cf->this_class);
+	printf("Minor_version: %d\n",cf->minor_version);
+	printf("Major_version: %d\n",cf->major_version);
+	printf("Constant pool count: %d\n",cf->constant_pool_count);
+	printf("Access flags: 0x%04x\n",cf->access_flags);
+	printf("This _class: %d\n",cf->this_class);
 	printf("super: %d\n",cf->super_class);
 	printf("interfaces_count: %d\n",cf->interfaces_count);
 	printf("fields_count: %d\n",cf->fields_count);
 	printf("methods_count: %d\n",cf->methods_count);
 	printf("attributes_count: %d\n",cf->attributes_count);
 }
+
+
+
+void imprime_acoes_general_information(){
+	printf("\n\n\n\t[-1] Voltar\n\n");
+}
+
+
+void imprime_general_information(ClassFile *cf) {
+	int acao;
+
+	do {
+		limpa_tela();
+		printf("General Information\n");
+		printf("Minor version: %d\n",cf->minor_version);
+		printf("Major version: %d\n",cf->major_version);
+		printf("Constant pool count: %d\n",cf->constant_pool_count);
+		printf("Access flags: 0x%04x",cf->access_flags);
+		imprime_descricao_class_flags(cf->access_flags);
+		printf("\n");
+		printf("This class: cp_info #%d ",cf->this_class);
+		imprime_constant_class(cf->constant_pool,cf->this_class);
+		printf("\n");
+		printf("Super: cp_info #%d ",cf->super_class);
+		imprime_constant_class(cf->constant_pool,cf->super_class);
+		printf("\n");
+		printf("Interfaces count: %d\n",cf->interfaces_count);
+		printf("Fields count: %d\n",cf->fields_count);
+		printf("Methods count: %d\n",cf->methods_count);
+		printf("Attributes count: %d\n",cf->attributes_count);
+
+		imprime_acoes_general_information();
+
+		acao = le_inteiro();
+	
+	}while(acao != -1);
+}
+
+
 
 
 void imprime_contexto_principal() {
@@ -50,8 +93,8 @@ int main() {
 
 		switch (acao) {
 			case(1):
+				imprime_general_information(cf);
 				break;
-
 			case(2):
 				navegacao_do_constant_pool(cf->constant_pool, cf->constant_pool_count);
 				break;
