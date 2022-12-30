@@ -2,6 +2,36 @@
 
 
 
+
+
+int imprime_descricao_mascara_se_pertencer_a_flags(u2 access_flags, u2 mascara, char descricao_mascara[], int flags_ja_encontradas){
+	if((access_flags & mascara) == mascara) {
+		printf("%s%s", (flags_ja_encontradas > 0) ? " " :"",descricao_mascara);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
+void imprime_descricao_field_flag(u2 access_flags) {
+	printf("[");
+	int total_flags = 0;
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_PUBLIC,"public", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_PRIVATE, "private", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_PROTECTED, "protected", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_STATIC, "static", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_FINAL, "final", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_VOLATILE, "volatile", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_TRANSIENT, "transient", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_SYNTHETIC, "synthetic", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, FIELD_MASK_ACC_ENUM, "enum", total_flags);
+
+	printf("]");
+}
+
+
 void imprime_informacoes_navegacao_field(field_info field, u2 num_field, constant constant_pool[]) {
     imprime_linha();
 	printf("\nInformações do field\n");
@@ -9,7 +39,9 @@ void imprime_informacoes_navegacao_field(field_info field, u2 num_field, constan
 	imprime_campo_utf8_entre_colchetes(constant_pool,field.name_index);
 	printf("\nDescriptor cp_info: #%d ", field.descriptor_index);
 	imprime_campo_utf8_entre_colchetes(constant_pool, field.descriptor_index);
-	printf("\nAcess Flags: 0x%04x\n", field.access_flags);
+	printf("\nAcess Flags: 0x%04x", field.access_flags);
+	imprime_descricao_field_flag(field.access_flags);
+	printf("\n");
 	imprime_linha();
 	printf("\n\n\n");
 }

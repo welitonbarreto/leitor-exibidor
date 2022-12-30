@@ -40,7 +40,7 @@ void imprime_contexto_principal() {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/TesteConstantValue.class");
+	ClassFile *cf = le_class_file ("classes/TesteFieldFlags.class");
 	int acao;
 
 	do {
