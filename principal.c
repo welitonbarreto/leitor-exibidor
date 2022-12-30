@@ -83,7 +83,7 @@ void imprime_contexto_principal() {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/InvokeExamples.class");
+	ClassFile *cf = le_class_file ("classes/TesteInterfaces.class");
 	int acao;
 
 	do {
@@ -100,6 +100,7 @@ int main() {
 				break;
 
 			case(3):
+				navegacao_nas_interfaces(cf->interfaces, cf->interfaces_count, cf->constant_pool);
 				break;
 
 			case(4):
