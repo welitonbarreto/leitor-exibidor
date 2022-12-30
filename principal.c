@@ -10,6 +10,7 @@
 #include "navegacao_methods.h"
 #include "impressao_interfaces.h"
 #include "navegacao_attributes.h"
+#include "navegacao_fields.h"
 
 
 
@@ -37,10 +38,9 @@ void imprime_contexto_principal() {
 	printf("[6] Attributes\n");
 }
 
-
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/TesteInnerClasses.class");
+	ClassFile *cf = le_class_file ("classes/TesteConstantValue.class");
 	int acao;
 
 	do {
@@ -59,6 +59,9 @@ int main() {
 			case(3):
 				break;
 
+			case(4):
+				navegacao_dos_fields(cf->fields, cf->fields_count, cf->constant_pool);
+				break;
 			case(5):
 				navegacao_dos_methods(cf->methods, cf->methods_count, cf->constant_pool);
 				break;
