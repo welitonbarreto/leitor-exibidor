@@ -147,3 +147,13 @@ void imprime_generic_info_from_atribute(attribute_info attr, constant constant_p
 	imprime_linha();
 	printf("\n");
 }
+
+
+int imprime_descricao_mascara_se_pertencer_a_flags(u2 access_flags, u2 mascara, char descricao_mascara[], int flags_ja_encontradas){
+	if((access_flags & mascara) == mascara) {
+		printf("%s%s", (flags_ja_encontradas > 0) ? " " :"",descricao_mascara);
+		return 1;
+	}
+
+	return 0;
+}

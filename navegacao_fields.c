@@ -3,18 +3,6 @@
 
 
 
-
-int imprime_descricao_mascara_se_pertencer_a_flags(u2 access_flags, u2 mascara, char descricao_mascara[], int flags_ja_encontradas){
-	if((access_flags & mascara) == mascara) {
-		printf("%s%s", (flags_ja_encontradas > 0) ? " " :"",descricao_mascara);
-		return 1;
-	}
-
-	return 0;
-}
-
-
-
 void imprime_descricao_field_flag(u2 access_flags) {
 	printf("[");
 	int total_flags = 0;

@@ -22,4 +22,5 @@ void imprime_numero_em_tabela(char nome_coluna[], int num);
 void imprime_utf8_em_tabela(int limite_caracteres, constant constant_pool[], int index);
 void imprime_generic_info_from_atribute(attribute_info attr, constant constant_pool[]);
 void imprime_class_em_tabela(int limite_caracteres, constant constant_pool[], int index);
+int imprime_descricao_mascara_se_pertencer_a_flags(u2 access_flags, u2 mascara, char descricao_mascara[], int flags_ja_encontradas);
 #endif

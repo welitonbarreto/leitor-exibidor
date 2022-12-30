@@ -3,6 +3,20 @@
 
 
 
+void imprime_descricao_attribute_flag(u2 access_flags) {
+	printf("[");
+	int total_flags = 0;
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_PUBLIC, "public", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_PRIVATE, "private", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_PROTECTED, "protected", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_STATIC, "static", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_FINAL, "final", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_INTERFACE, "interface", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, INNER_CLASS_MASK_ACC_ABSTRACT, "abstract", total_flags);
+
+	printf("]");
+}
+
 
 
 
@@ -18,7 +32,7 @@ void imprime_contexto_navegacao_attributo(attribute_info attributo, constant con
 
 
 void imprime_acoes_navegacao_attributo() {
-    printf(("\n\n\n\t[-1]Voltar\n"));
+    printf(("\n\n\n\t\t[-1]Voltar\n"));
 }
 
 
@@ -68,6 +82,7 @@ void imprime_specific_info_inner_class(attribute_info atributo, constant constan
         imprime_class_em_tabela(45, constant_pool, c.outer_class_info_index);
         imprime_utf8_em_tabela(45, constant_pool, c.inner_name_index);
         printf("||0x%04x", c.inner_class_access_flags);
+        imprime_descricao_attribute_flag(c.inner_class_access_flags); 
         printf("\n");
     }
 
