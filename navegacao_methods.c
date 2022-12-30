@@ -1,6 +1,40 @@
 #include "navegacao_methods.h"
 
 
+
+void imprime_descricao_method_flags(u2 access_flags) {
+	printf("[");
+	int total_flags = 0;
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_PUBLIC, "public", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_PRIVATE, "private", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_PROTECTED, "protected", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_STATIC, "static", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_FINAL, "final", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_SYNCHRONIZED, "synchronized", total_flags);
+	//total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_BRIDGE, "bridge", total_flags);
+	//total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_VARARGS, "varargs", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_NATIVE, "native", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_ABSTRACT, "abstract", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_STRICT, "strictfp", total_flags);
+	total_flags =  total_flags + imprime_descricao_mascara_se_pertencer_a_flags(access_flags, METHOD_MASK_ACC_SYNTHETIC, "synthetic", total_flags);
+
+
+
+
+	printf("]");
+}
+
+
+
+
+
+
+
+
+
+
+
+
 void imprime_instrucoes_bytecodes(u1* code, u4 code_length, constant constant_pool[]){
 
 	int posicao = 0;
@@ -269,7 +303,9 @@ void imprime_informacoes_method(method_info method, u2 num_metodo, constant cons
 	imprime_campo_utf8_entre_colchetes(constant_pool,method.name_index);
 	printf("\nDescriptor cp_info: #%d ", method.descriptor_index);
 	imprime_campo_utf8_entre_colchetes(constant_pool, method.descriptor_index);
-	printf("\nAcess Flags: 0x%04x\n", method.access_flags);
+	printf("\nAcess Flags: 0x%04x", method.access_flags);
+	imprime_descricao_method_flags(method.access_flags);
+	printf("\n");
 	imprime_linha();
 	printf("\n\n\n");
 }

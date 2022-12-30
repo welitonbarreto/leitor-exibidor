@@ -83,7 +83,7 @@ void imprime_contexto_principal() {
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/TesteInnerClasses.class");
+	ClassFile *cf = le_class_file ("classes/InvokeExamples.class");
 	int acao;
 
 	do {
