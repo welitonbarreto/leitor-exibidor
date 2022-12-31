@@ -124,13 +124,5 @@ int main() {
 	} while(acao != -1);
 
 
-
-
-
-	//navegacao_nas_interfaces(cf->interfaces, cf->interfaces_count, cf->constant_pool);
-	//
-	
-	//imprime_code_from_method(metodo, cf->constant_pool);
-	//imprime_class_file(cf);
 	libera_class_file(cf);
 }

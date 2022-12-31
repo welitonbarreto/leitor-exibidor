@@ -180,6 +180,7 @@ void imprime_constant_fieldref_info(constant constant_pool[], int posicao) {
 	printf(">\n");
 }
 
+ 
 
 
 void imprime_constant_methodref_info(constant constant_pool[], int posicao) {
@@ -251,6 +252,79 @@ void imprime_constant_string_info(constant constant_pool[], int posicao) {
 	printf("\n");
 }
 
+
+void imprime_constant_dynamic_info(constant constant_pool[], int posicao){
+	int index_name_and_type = constant_pool[posicao-1].u.InvokeDynamic.name_and_type_index;
+	int bootstrap_method = constant_pool[posicao-1].u.InvokeDynamic.bootstrap_method_attr_index;
+
+	printf("\t\tName and type: cp_info #%d <", index_name_and_type);
+	imprime_name_and_type_em_uma_linha(constant_pool, index_name_and_type);
+	printf("\n");
+	printf("\t\tBootstrapMethod #%d", bootstrap_method);
+	printf("\n");
+}
+
+
+
+void imprime_descricao_reference_kind(u1 reference_kind) {
+	switch(reference_kind) {
+		case 1:
+			printf("REF_getField");
+			break;
+		case 2:
+			printf("REF_getStatic");
+			break;
+		case 3:
+			printf("REF_putField");
+			break;
+		case 4:
+			printf("REF_putStatic");
+			break;
+		case 5:
+			printf("REF_invokeVirtual");
+			break;
+		case 6:
+			printf("REF_invokeStatic");
+			break;
+		case 7:
+			printf("REF_invokeSpecial");
+			break;
+		case 8:
+			printf("REF_newInvokeSpecial");
+			break;
+		case 9:
+			printf("REF_invokeInterface");
+			break;
+		default:
+			break;
+	}
+
+}
+
+
+void imprime_constant_method_handle_info(constant constant_pool[], int posicao){
+	u1 reference_kind = constant_pool[posicao-1].u.MethodHandle.reference_kind;
+	u2 reference_index = constant_pool[posicao-1].u.MethodHandle.reference_index;
+
+	printf("\t\tReference kind: ");
+	imprime_descricao_reference_kind(reference_kind);
+	printf("\n");
+	printf("\t\tReference Index: cp_info #%d", reference_index);
+	printf("\n");
+}
+
+
+
+void imprime_constant_method_type_info(constant constant_pool[], int posicao) {
+	u2 descriptor_index = constant_pool[posicao-1].u.MethodType.descriptor_index;
+	printf("\t\tType: cp_info #%d ", descriptor_index);
+	imprime_campo_utf8_entre_colchetes(constant_pool, descriptor_index);
+	printf("\n");
+}
+
+
+
+
 int eh_posicao_invalida(constant constant_pool[], int posicao){
 	u1 tag = constant_pool[posicao-2].tag; 
 	if ((tag == CONSTANT_Double) || (tag == CONSTANT_Long)) {
@@ -259,6 +333,7 @@ int eh_posicao_invalida(constant constant_pool[], int posicao){
 
 	return 0;
 }
+
 
 
 
@@ -307,6 +382,15 @@ void imprime_tela_navegacao_inicial(constant constant_pool[], int constant_pool_
 				break;	
 			case CONSTANT_Utf8:
 				printf("Constant_utf_8_info\n");
+				break;
+			case CONSTANT_InvokeDynamic:
+				printf("Constant_InvokeDynamic_info\n"); 
+				break;
+			case CONSTANT_MethodHandle:
+				printf("Constant_MethodHandle_info\n");
+				break;
+			case CONSTANT_MethodType:
+				printf("Constant_MethodType_info\n");
 				break;
 			default:
 				printf("\n");
@@ -375,6 +459,18 @@ void imprime_tela_indice_constant_pool(constant constant_pool[],int posicao){
 				printf("\tConstant_utf_8_info\n");
 				imprime_constant_utf_8_info(constant_pool, posicao); 
  				break;
+			case CONSTANT_InvokeDynamic:
+				printf("\tConstant_InvokeDynamic_info\n");
+				imprime_constant_dynamic_info(constant_pool, posicao);
+				break;
+			case CONSTANT_MethodHandle:
+				printf("\tConstant_MethodHandle_info\n");
+				imprime_constant_method_handle_info(constant_pool, posicao);
+				break;
+			case CONSTANT_MethodType:
+				printf("\tConstant_MethodType_info\n");
+				imprime_constant_method_type_info(constant_pool, posicao);
+				break;
 			default:
 				printf("\n");
 				// printf("padrao %d\n",i+1);
