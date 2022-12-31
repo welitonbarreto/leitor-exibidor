@@ -35,7 +35,7 @@ void imprime_class_file(ClassFile *cf) {
 
 
 void imprime_acoes_general_information(){
-	printf("\n\n\n\t[-1] Voltar\n\n");
+	printf("\n\n\n\t(-1) Voltar\n\n");
 }
 
 
@@ -44,27 +44,27 @@ void imprime_general_information(ClassFile *cf) {
 
 	do {
 		limpa_tela();
-		printf("General Information\n");
-		printf("Minor version: %d\n",cf->minor_version);
-		printf("Major version: %d\n",cf->major_version);
-		printf("Constant pool count: %d\n",cf->constant_pool_count);
-		printf("Access flags: 0x%04x",cf->access_flags);
+		printf("[1]General Information\n");
+		printf("\tMinor version: %d\n",cf->minor_version);
+		printf("\tMajor version: %d\n",cf->major_version);
+		printf("\tConstant pool count: %d\n",cf->constant_pool_count);
+		printf("\tAccess flags: 0x%04x",cf->access_flags);
 		imprime_descricao_class_flags(cf->access_flags);
 		printf("\n");
-		printf("This class: cp_info #%d ",cf->this_class);
+		printf("\tThis class: cp_info #%d ",cf->this_class);
 		imprime_constant_class(cf->constant_pool,cf->this_class);
 		printf("\n");
-		printf("Super: cp_info #%d ",cf->super_class);
+		printf("\tSuper: cp_info #%d ",cf->super_class);
 		imprime_constant_class(cf->constant_pool,cf->super_class);
 		printf("\n");
-		printf("Interfaces count: %d\n",cf->interfaces_count);
-		printf("Fields count: %d\n",cf->fields_count);
-		printf("Methods count: %d\n",cf->methods_count);
-		printf("Attributes count: %d\n",cf->attributes_count);
+		printf("\tInterfaces count: %d\n",cf->interfaces_count);
+		printf("\tFields count: %d\n",cf->fields_count);
+		printf("\tMethods count: %d\n",cf->methods_count);
+		printf("\tAttributes count: %d\n",cf->attributes_count);
 
 		imprime_acoes_general_information();
 
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 	
 	}while(acao != -1);
 }
@@ -73,44 +73,51 @@ void imprime_general_information(ClassFile *cf) {
 
 
 void imprime_contexto_principal() {
-	printf("[1] General information\n");
-	printf("[2] Constant Pool\n");
-	printf("[3] Interfaces\n");
-	printf("[4] Fields\n");
-	printf("[5] Methods\n");
-	printf("[6] Attributes\n");
+	printf("(1) General information\n");
+	printf("(2) Constant Pool\n");
+	printf("(3) Interfaces\n");
+	printf("(4) Fields\n");
+	printf("(5) Methods\n");
+	printf("(6) Attributes\n");
+}
+
+void imprime_acoes_contexto_principal() {
+	printf("\n");
+	printf("(-1) Sair\n");
 }
 
 int main() {
 
-	ClassFile *cf = le_class_file ("classes/TesteInterfaces.class");
+	ClassFile *cf = le_class_file ("classes/TesteInnerClasses.class");
 	int acao;
 
 	do {
 		limpa_tela();
 		imprime_contexto_principal();
-		acao = le_inteiro();
+		imprime_acoes_contexto_principal();
+		printf("\n");
+		acao = solicita_inteiro();
 
 		switch (acao) {
-			case(1):
+			case 1:
 				imprime_general_information(cf);
 				break;
-			case(2):
+			case 2:
 				navegacao_do_constant_pool(cf->constant_pool, cf->constant_pool_count);
 				break;
 
-			case(3):
+			case 3:
 				navegacao_nas_interfaces(cf->interfaces, cf->interfaces_count, cf->constant_pool);
 				break;
 
-			case(4):
+			case 4:
 				navegacao_dos_fields(cf->fields, cf->fields_count, cf->constant_pool);
 				break;
-			case(5):
+			case 5:
 				navegacao_dos_methods(cf->methods, cf->methods_count, cf->constant_pool);
 				break;
 
-			case(6):
+			case 6:
 				navega_nos_attributes(cf->attributes, cf->attributes_count, cf->constant_pool);
 				break;
 		}

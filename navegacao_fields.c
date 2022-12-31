@@ -31,14 +31,14 @@ void imprime_informacoes_navegacao_field(field_info field, u2 num_field, constan
 	imprime_descricao_field_flag(field.access_flags);
 	printf("\n");
 	imprime_linha();
-	printf("\n\n\n");
+	printf("\n\n");
 }
 
 
 void imprime_contexto_navegacao_field(field_info field, int num_field, constant constant_pool[]) {
     imprime_contexto_navegacao_fields();
 
-	printf("\t");
+	printf("\t[%d]", num_field);
 	imprime_constant_utf_value(constant_pool[field.name_index-1]);
 	printf("\n");
     
@@ -50,30 +50,32 @@ void imprime_acoes_navegacao_field(field_info field, constant constant_pool[]) {
 	
 	int i;
 	for(i = 0; i < field.attributes_count; i++) {
-		printf("\t\t[%d] ", i);
+		printf("\t\t(%d) ", i);
 		imprime_constant_utf_value(constant_pool[atributos[i].attribute_name_index-1]);
 		printf("\n");
 	}
 
-	printf("\n\n\n\t\t[-1] Voltar\n");
+	printf("\n\n\n\t\t(-1) Voltar\n");
 }
 
 
 
 void imprime_acao_navegacao_attribute_from_field() {
-	printf("\n\n\n\t\t\t[-1] Voltar\n");
+	printf("\n\n\n\t\t\t(-1) Voltar\n");
 }
 
 
 void imprime_contexto_navegacao_attribute_from_field(attribute_info atributo, int num_attr, field_info field, int num_field, constant constant_pool[]){
 	imprime_contexto_navegacao_field(field, num_field, constant_pool);
-	printf("\t\t");
+	printf("\t\t[%d]", num_attr);
 	imprime_constant_utf_value(constant_pool[atributo.attribute_name_index-1]);
 	printf("\n");
 }
 
 
 void imprime_specific_info_from_constant_value(attribute_info attr, constant constant_pool[]) {
+	printf("Specific Information");
+	printf("\n");
 	printf("Constant value index: cp_info #%d <", attr.info.ConstantValue.constantvalue_index);
 
 	u1 tag = constant_pool[attr.info.ConstantValue.constantvalue_index-1].tag;
@@ -106,9 +108,10 @@ void imprime_specific_info_from_constant_value(attribute_info attr, constant con
 void imprime_informacoes_constant_value(attribute_info attr, constant constant_pool[]) {
 	printf("\n");
 	imprime_generic_info_from_atribute(attr, constant_pool);
+	printf("\n");
 	imprime_specific_info_from_constant_value(attr, constant_pool);
 	imprime_linha();
-	printf("\n");
+	printf("\n\n");
 }
 
 
@@ -119,8 +122,8 @@ void navegacao_attribute_constant_value(attribute_info atributo, int num_attr, f
 		limpa_tela();
 		imprime_contexto_navegacao_attribute_from_field(atributo, num_attr, field, num_field, constant_pool);
 		imprime_acao_navegacao_attribute_from_field();
-		imprime_informacoes_constant_value(atributo, constant_pool);
-		acao = le_inteiro();
+		imprime_informacoes_constant_value(atributo,constant_pool);
+		acao = solicita_inteiro();
 	}while(acao != -1);
 }
 
@@ -135,7 +138,8 @@ void navegacao_attribute_from_field_not_found(attribute_info attr, int num_attr,
 		imprime_contexto_navegacao_attribute_from_field(attr, num_attr, field, num_field, constant_pool);
 		imprime_acao_navegacao_attribute_from_field();
 		imprime_generic_info_from_atribute(attr, constant_pool);
-		acao = le_inteiro();
+		printf("\n\n");
+		acao = solicita_inteiro();
 	}while(acao != -1);
 }
 
@@ -150,7 +154,7 @@ void navegacao_field(field_info field, int num_field, constant constant_pool[]){
         imprime_acoes_navegacao_field(field, constant_pool);
         imprime_informacoes_navegacao_field(field, num_field, constant_pool);
 		
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 		if (acao >= 0 && acao < field.attributes_count) {
 			attribute_info atributo = field.attributes[acao];
 			u1* name = constant_pool[atributo.attribute_name_index-1].u.Utf8.bytes;
@@ -169,7 +173,7 @@ void navegacao_field(field_info field, int num_field, constant constant_pool[]){
 }
 
 void imprime_contexto_navegacao_fields() {
-    printf("Fields\n");
+    printf("[4]Fields\n");
 }
 
 
@@ -177,13 +181,13 @@ void imprime_contexto_navegacao_fields() {
 
 void imprime_acoes_navegacao_fields(field_info fields[], u2 fields_count, constant constant_pool[]) {
     for(int i = 0;i < fields_count;i++) {
-		printf("\t[%d]", i);
+		printf("\t(%d)", i);
 		imprime_constant_utf_value(constant_pool[fields[i].name_index-1]);
 		printf("\n");
 	}
 
 	printf("\n\n\n");
-	printf("\t[-1] Voltar\n");
+	printf("\t(-1) Voltar\n\n");
 
 }
 
@@ -201,7 +205,7 @@ void navegacao_dos_fields(field_info fields[], u2 fields_count, constant constan
         imprime_contexto_navegacao_fields();
         imprime_acoes_navegacao_fields(fields, fields_count, constant_pool);
 
-        acao = le_inteiro();
+        acao = solicita_inteiro();
 
         if(acao >= 0 && acao < fields_count) {
 			navegacao_field(fields[acao], acao, constant_pool);

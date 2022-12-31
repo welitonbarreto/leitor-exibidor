@@ -44,7 +44,6 @@ void imprime_instrucoes_bytecodes(u1* code, u4 code_length, constant constant_po
 		posicao = funcao(code, posicao, constant_pool);
 	}
 
-	printf("\n\n");
 }
 
 void imprime_exception_table_from_method(exception* exception_table, u2 exception_table_length, constant constant_pool[]) {
@@ -62,14 +61,13 @@ void imprime_exception_table_from_method(exception* exception_table, u2 exceptio
 		imprime_numero_em_tabela("HANDLER PC", excecao.handler_pc);
 		printf("||cp_info #%d ", excecao.catch_type);
 		imprime_constant_class(constant_pool, excecao.catch_type);
-		printf("\n");
 	}
 	
 }
 
 void imprime_contexto_navegacao_code(attribute_info attr_code, u2 num_attr_code, method_info metodo, u2 num_metodo, constant constant_pool[]) {
 	imprime_contexto_navegacao_method(metodo, num_metodo, constant_pool);
-	printf("\t\t ");
+	printf("\t\t[%d]", num_attr_code);
 	imprime_constant_utf_value(constant_pool[attr_code.attribute_name_index-1]);
 	printf("\n");
 
@@ -80,14 +78,14 @@ void imprime_contexto_navegacao_local_variable_table(attribute_info attr_local_v
 												  method_info metodo_pai, u2 num_metodo, constant constant_pool[])
 {
 	imprime_contexto_navegacao_code(attr_code, num_attr_code, metodo_pai, num_metodo, constant_pool);
-	printf("\t\t\t");
+	printf("\t\t\t[%d]", num_attr_local_var);
 	imprime_constant_utf_value(constant_pool[attr_local_var.attribute_name_index-1]);
 	printf("\n");
 }
 
 void imprime_acoes_navegacao_local_variable_table() {
 	printf("\n\n\n");
-	printf("\t\t\t\t[-1] VOLTAR");
+	printf("\t\t\t\t(-1) VOLTAR");
 	printf("\n\n\n");
 }
 
@@ -118,12 +116,15 @@ void imprime_specific_info_from_local_var_table(local_variable local_variable_ta
 
 void imprime_informacoes_local_variable(attribute_info attr_local_var, u2 num_attr_code, constant constant_pool[]) {
 	printf("\n");
+	imprime_linha();
 	imprime_generic_info_from_atribute(attr_local_var, constant_pool);
+	imprime_linha();
 	imprime_specific_info_from_local_var_table(attr_local_var.info.LocalVariableTable.local_variable_table, 
 											   attr_local_var.info.LocalVariableTable.local_variable_table_length,
 											   constant_pool);
 	imprime_linha();
-	printf("\n");
+	imprime_linha();
+	printf("\n\n");
 }
 
 void navegacao_local_variable_table(attribute_info attr_local_var, u2 num_attr_local_var, attribute_info attr_code, u2 num_attr_code,
@@ -140,7 +141,7 @@ void navegacao_local_variable_table(attribute_info attr_local_var, u2 num_attr_l
 		imprime_acoes_navegacao_local_variable_table();	
 		imprime_informacoes_local_variable(attr_local_var, num_attr_code, constant_pool) ;
 
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 	}while (acao != ACAO_VOLTAR);
 	
 
@@ -187,7 +188,7 @@ void imprime_informacoes_line_number_table(attribute_info attr_line_number_tab, 
 											   attr_line_number_tab.info.LineNumberTable.line_number_table_length,
 											   constant_pool);
 	imprime_linha();
-	printf("\n");
+	printf("\n\n");
 }
 
 
@@ -207,7 +208,7 @@ void navegacao_line_number_table(attribute_info attr_line_number_tab, u2 num_att
 		imprime_informacoes_line_number_table(attr_line_number_tab, constant_pool);
 		//imprime_informacoes_local_variable(attr_local_var, num_attr_code, constant_pool) ;
 
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 	}while (acao != ACAO_VOLTAR);
 	
 
@@ -216,11 +217,11 @@ void navegacao_line_number_table(attribute_info attr_line_number_tab, u2 num_att
 void imprime_misc(attribute_info attr_code) {
 	printf("Maximum stack size: %d\n", attr_code.info.Code.max_stack);
 	printf("Maximum local variables: %d \n", attr_code.info.Code.max_locals);
-	printf("Code length: %d\n", attr_code.info.Code.code_length);
+	printf("Code length: %d", attr_code.info.Code.code_length);
 }
 
 void imprime_specific_info_from_code(attribute_info attr_code, constant constant_pool[], int acao) {
-	printf("\nSpecific Info");
+	printf("Specific Info");
 
 	if(acao == ACAO_BYTECODES){
 		printf(" - BYTECODE\n");
@@ -232,33 +233,33 @@ void imprime_specific_info_from_code(attribute_info attr_code, constant constant
 		printf(" - MISC\n");
 		imprime_misc(attr_code);
 	}
-
-	printf("\n\n");
+	printf("\n");
 }
 
 
 void imprime_informacoes_code(attribute_info attr_code, u2 num_attr_code, constant constant_pool[], int acao) {
 	printf("\n");
 	imprime_generic_info_from_atribute(attr_code, constant_pool);
+	printf("\n");
 	imprime_specific_info_from_code(attr_code, constant_pool, acao);
 	imprime_linha();
-	printf("\n");
+	printf("\n\n");
 }
 
 
 void imprime_acoes_navegacao_code(attribute_info attributes[], u2 attributes_count, constant constant_pool[]) {
 	int i = 0;	
 	for(int i = 0; i < attributes_count; i++) {
-		printf("\t\t\t[%d] ", i);
+		printf("\t\t\t(%d) ", i);
 		imprime_constant_utf_value(constant_pool[attributes[i].attribute_name_index-1]);
 		printf("\n");
 	}
 
 	printf("\n\n\n");
-	printf("\t\t\t[-1] VOLTAR\n");
-	printf("\t\t\t[-2] MOSTRAR BYTECODE\n");
-	printf("\t\t\t[-3] MOSTRAR EXCEPTION TABLE\n");
-	printf("\t\t\t[-4] MOSTRAR MISC\n");
+	printf("\t\t\t(-1) VOLTAR\n");
+	printf("\t\t\t(-2) MOSTRAR BYTECODE\n");
+	printf("\t\t\t(-3) MOSTRAR EXCEPTION TABLE\n");
+	printf("\t\t\t(-4) MOSTRAR MISC\n");
 	printf("\n");
 }
 
@@ -270,8 +271,7 @@ void navegacao_code(attribute_info attr_code, u2 num_attr_code, method_info meto
 		imprime_contexto_navegacao_code(attr_code, num_attr_code, metodo_pai, num_metodo, constant_pool);
 		imprime_acoes_navegacao_code(attr_code.info.Code.attributes, attr_code.info.Code.attributes_count, constant_pool);
 		imprime_informacoes_code(attr_code, num_attr_code, constant_pool, acao);
-		printf("Insira um valor válido\n");
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 		
 		if(acao >= 0 && acao < attr_code.info.Code.attributes_count) {
 			attribute_info atributo = attr_code.info.Code.attributes[acao];
@@ -307,7 +307,7 @@ void imprime_informacoes_method(method_info method, u2 num_metodo, constant cons
 	imprime_descricao_method_flags(method.access_flags);
 	printf("\n");
 	imprime_linha();
-	printf("\n\n\n");
+	printf("\n\n");
 }
 
 void imprime_acoes_navegacao_method(method_info method, constant constant_pool[]) {
@@ -316,20 +316,19 @@ void imprime_acoes_navegacao_method(method_info method, constant constant_pool[]
 	int i;
 	for(i = 0; i < method.attributes_count; i++) {
 		//u2 name_index = method.attributes[1];
-		printf("\t\t[%d] ", i);
+		printf("\t\t(%d)", i);
 		imprime_constant_utf_value(constant_pool[atributos[i].attribute_name_index-1]);
 		printf("\n");
 	}
 
-	printf("\n\n\n\t\t[-1] Voltar\n");
+	printf("\n\n\n\t\t(-1) Voltar\n");
 }
 
 
 
 void imprime_contexto_navegacao_method(method_info method, u2 num_metodo, constant constant_pool[]) {
 	imprime_contexto_navegacao_methods();
-	//printf("\t[%d]", num_metodo);
-	printf("\t");
+	printf("\t[%d]", num_metodo);
 	imprime_constant_utf_value(constant_pool[method.name_index-1]);
 	printf("\n");
 }
@@ -342,7 +341,7 @@ void imprime_contexto_navegacao_exceptions(attribute_info attr_exceptions, u2 nu
 
 void imprime_acoes_navegacao_exceptions() {
 	printf("\n\n\n");
-	printf("\t\t\t[-1] VOLTAR\n");
+	printf("\t\t\t(-1) Voltar\n");
 }
 
 
@@ -364,10 +363,11 @@ void imprime_specific_info_from_exceptions(u2* exception_index_table, u2 length,
 void imprime_informacoes_exceptions(attribute_info attr_except, u2 num_attr_except, constant constant_pool[]) {
 	printf("\n");
 	imprime_generic_info_from_atribute(attr_except, constant_pool);
+	printf("\n");
 	imprime_specific_info_from_exceptions(attr_except.info.Exceptions.exception_index_table,
 										 attr_except.info.Exceptions.number_of_exceptions, constant_pool);
 	imprime_linha();
-	printf("\n");
+	printf("\n\n");
 }
 
 
@@ -379,32 +379,32 @@ void navegacao_exceptions(attribute_info attr_exceptions, u2 num_attr, method_in
 		imprime_contexto_navegacao_exceptions(attr_exceptions, num_attr, metodo_pai, num_metodo, constant_pool);		
 		imprime_acoes_navegacao_exceptions();
 		imprime_informacoes_exceptions(attr_exceptions, num_attr, constant_pool);
-		printf("Insira um valor válido\n");
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 		
 	}while(acao != ACAO_VOLTAR);
 }
 
-void imprime_contexto_navegacao_attribute_from_method_not_found(attribute_info attr, u2 num_attr,
+void imprime_contexto_navegacao_not_found_attribute_from_method(attribute_info attr, u2 num_attr,
 											  method_info metodo_pai, u2 num_metodo, constant constant_pool[])
 {
 	imprime_contexto_navegacao_method(metodo_pai, num_metodo, constant_pool);
-	printf("\t\t");
+	printf("\t\t[%d]", num_attr);
 	imprime_constant_utf_value(constant_pool[attr.attribute_name_index-1]);
 	printf("\n");
 }
 
 
-void navegacao_attribute_from_method_not_found(attribute_info attr, u2 num_attr,
+void navegacao_not_found_attribute_from_method(attribute_info attr, u2 num_attr,
 											  method_info metodo_pai, u2 num_metodo, constant constant_pool[]) {
 	int acao;
 
 	do {
 		limpa_tela();	
-		imprime_contexto_navegacao_attribute_from_method_not_found(attr, num_attr, metodo_pai, num_metodo, constant_pool);
-		printf("\n\n\n\t\t[-1] Voltar\n");
-		printf("Insira um valor válido\n");
-		acao = le_inteiro();
+		imprime_contexto_navegacao_not_found_attribute_from_method(attr, num_attr, metodo_pai, num_metodo, constant_pool);
+		printf("\n\n\n\t\t\t(-1) Voltar\n\n\n");
+		imprime_generic_info_from_atribute(attr, constant_pool);
+		printf("\n\n");
+		acao = solicita_inteiro();
 		
 	}while(acao != ACAO_VOLTAR);
 
@@ -419,7 +419,7 @@ void navegacao_dos_method(method_info method,u2 num_metodo,constant constant_poo
 		imprime_acoes_navegacao_method(method, constant_pool);	
 		imprime_informacoes_method(method, num_metodo, constant_pool);
 
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 
 		if (acao >= 0 && acao < method.attributes_count) {
 			attribute_info atributo = method.attributes[acao];
@@ -431,7 +431,7 @@ void navegacao_dos_method(method_info method,u2 num_metodo,constant constant_poo
 			} else if(nome_u1_igual_string(name,"Exceptions",length)) {
 				navegacao_exceptions(atributo, acao, method, num_metodo, constant_pool);			
 			} else{
-				navegacao_attribute_from_method_not_found(atributo, acao, method, num_metodo, constant_pool);
+				navegacao_not_found_attribute_from_method(atributo, acao, method, num_metodo, constant_pool);
 			}
 		}
 		
@@ -440,19 +440,19 @@ void navegacao_dos_method(method_info method,u2 num_metodo,constant constant_poo
 }
 
 void imprime_contexto_navegacao_methods() {
-	printf("Methods\n");
+	printf("[5]Methods\n");
 }
 
 void imprime_acoes(method_info methods[], u2 methods_count, constant constant_pool[]) {
 
 	for(int i = 0;i < methods_count;i++) {
-		printf("\t[%d]", i);
+		printf("\t(%d)", i);
 		imprime_constant_utf_value(constant_pool[methods[i].name_index-1]);
 		printf("\n");
 	}
 
 	printf("\n");
-	printf("\t[-1] Sair\n");	
+	printf("\t(-1) Voltar\n\n");	
 }
 
 void navegacao_dos_methods(method_info methods[], u2 methods_count, constant constant_pool[]) {
@@ -464,7 +464,7 @@ void navegacao_dos_methods(method_info methods[], u2 methods_count, constant con
 		imprime_contexto_navegacao_methods();
 		imprime_acoes(methods, methods_count, constant_pool);
 
-		acao = le_inteiro();
+		acao = solicita_inteiro();
 		
 		if(acao >= 0 && acao < methods_count) {
 			navegacao_dos_method(methods[acao], acao, constant_pool);

@@ -14,7 +14,7 @@
 
 
 void imprime_acoes_navegacao_interface() {
-    printf("\n\n\n\t\t[-1] Voltar\n\n\n");
+    printf("\n\n\n\t\t(-1) Voltar\n\n\n");
 }
 
 void imprime_informacoes_interface(u2 interface, constant constant_pool[]){
@@ -28,7 +28,7 @@ void imprime_informacoes_interface(u2 interface, constant constant_pool[]){
 
 void imprime_contexto_navegacao_interface(u2 interface, int num_interface, constant constant_pool[]) {
     imprime_contexto_navegacao_nas_interfaces();
-    printf("\t(%d)Interface\n", num_interface);
+    printf("\t[%d]Interface\n", num_interface);
 }
 
 
@@ -41,7 +41,7 @@ void navegacao_interface(u2 interface, int num_interface, constant constant_pool
         imprime_acoes_navegacao_interface();
         imprime_informacoes_interface(interface, constant_pool);
         printf("\n");
-        acao = le_inteiro();
+        acao = solicita_inteiro();
     } while(acao != -1);
     
 
@@ -55,13 +55,13 @@ void imprime_acoes_navegacao_interfaces(u2 interfaces[], u2 interfaces_count, co
         printf("\t(%d)Interface\n",i);
     }
 
-    printf("\n\n\n\t[-1] Voltar\n\n\n");
+    printf("\n\n\n\t(-1) Voltar\n\n\n");
 
 }
 
 
 void imprime_contexto_navegacao_nas_interfaces() {
-    printf("Interfaces\n");
+    printf("[3]Interfaces\n");
 }
 
 void navegacao_nas_interfaces(u2 interfaces[], u2 interfaces_count, constant constant_pool[]) {
@@ -72,7 +72,7 @@ void navegacao_nas_interfaces(u2 interfaces[], u2 interfaces_count, constant con
         imprime_contexto_navegacao_nas_interfaces();
         imprime_acoes_navegacao_interfaces(interfaces, interfaces_count, constant_pool);
     
-        acao = le_inteiro();
+        acao = solicita_inteiro();
         
         if(acao >= 0 && acao < interfaces_count) {
 			navegacao_interface(interfaces[acao], acao, constant_pool);

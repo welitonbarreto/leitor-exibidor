@@ -266,57 +266,56 @@ int eh_posicao_invalida(constant constant_pool[], int posicao){
 
 
 void imprime_tela_navegacao_inicial(constant constant_pool[], int constant_pool_count) {
-	printf("Constant Pool\n");
+	printf("[2]Constant Pool\n");
 
 	for(int posicao = 1;posicao < constant_pool_count;posicao++) {
-		printf("[%d]", posicao);
+		printf("\t(%d)", posicao);
 		if(eh_posicao_invalida(constant_pool, posicao)){
 			printf("\tlarge numeric continued\n");
 			continue;
 		}
 		switch(constant_pool[posicao-1].tag) {
 			case CONSTANT_Class:
-				printf("\tConstant_Class_info\n");
+				printf("Constant_Class_info\n");
 				break; 
 			case CONSTANT_Fieldref:
-				printf("\tConstant_Fieldref_info\n");
+				printf("Constant_Fieldref_info\n");
 				break; 
 			case CONSTANT_Methodref:
-				printf("\tConstant_Methodref_info\n");
+				printf("Constant_Methodref_info\n");
 				break;
 			case CONSTANT_InterfaceMethodref:
-				printf("\tConstant_InterfaceMethodref_info\n");
+				printf("Constant_InterfaceMethodref_info\n");
 				break;
 			case CONSTANT_String:
-				printf("\tConstant_String_info\n");
+				printf("Constant_String_info\n");
 				break;
 			case CONSTANT_Integer:
-				printf("\tConstant_Integer_info\n");
+				printf("Constant_Integer_info\n");
 				break;
 			case CONSTANT_Float:
-				printf("\tConstant_Float_info\n");
+				printf("Constant_Float_info\n");
 				break;
 			case CONSTANT_Long:
-				printf("\tConstant_Long_info\n");
+				printf("Constant_Long_info\n");
 				break;
 			case CONSTANT_Double:
-				printf("\tConstant_Double_info\n");
+				printf("Constant_Double_info\n");
 				break;
 			case CONSTANT_NameAndType:
-				printf("\tConstant_NameAndType_info\n");
+				printf("Constant_NameAndType_info\n");
 				break;	
 			case CONSTANT_Utf8:
-				printf("\tConstant_utf_8_info\n");
+				printf("Constant_utf_8_info\n");
 				break;
 			default:
+				printf("\n");
 				// printf("padrao %d\n",i+1);
 				break;
 		}
 	}
-	printf("\n");
-	printf("[-1]\tVoltar\n");
-	printf("\n");
-	printf("Digite o número da ação: \n");
+
+	printf("\n\n\n\t(-1)Voltar\n\n");
 }
 
 
@@ -377,15 +376,12 @@ void imprime_tela_indice_constant_pool(constant constant_pool[],int posicao){
 				imprime_constant_utf_8_info(constant_pool, posicao); 
  				break;
 			default:
+				printf("\n");
 				// printf("padrao %d\n",i+1);
 				break;
 		}
-	printf("\n");
 
-	printf("[-1] Voltar\n");
-	
-	printf("\n");
-	printf("Digite o número da ação: \n");
+	printf("\n\n\n\t\t(-1) Voltar\n\n");
 }
 
 
@@ -395,23 +391,23 @@ void navegacao_indice_constant_pool(constant constant_pool[],int posicao) {
 	do {
 		limpa_tela();
 		imprime_tela_indice_constant_pool(constant_pool, posicao);
-		scanf("%d", &acao);
+		acao = solicita_inteiro();
 	} while(acao != -1);
 }
 
 
 
 void navegacao_do_constant_pool(constant constant_pool[], u2 constant_pool_count) {
-	int posicao;
+	int acao;
 
 	do {
 		limpa_tela();
 		imprime_tela_navegacao_inicial(constant_pool, constant_pool_count);		
-		scanf("%d", &posicao);
-		if(posicao > 0) {
-			navegacao_indice_constant_pool(constant_pool, posicao);
+		acao = solicita_inteiro();
+		if(acao > 0 && acao < constant_pool_count) {
+			navegacao_indice_constant_pool(constant_pool, acao);
 		}
 
-	} while(posicao != -1);
+	} while(acao != -1);
 }
 

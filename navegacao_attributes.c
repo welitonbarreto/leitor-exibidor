@@ -22,32 +22,32 @@ void imprime_descricao_attribute_flag(u2 access_flags) {
 
 
 
-void imprime_contexto_navegacao_attributo(attribute_info attributo, constant constant_pool[]) {
+void imprime_contexto_navegacao_attributo(attribute_info attributo, int num_attr, constant constant_pool[]) {
     imprime_contexto_navegacao_attributes();
     
-    printf("\t");
+    printf("\t[%d]",num_attr);
 	imprime_constant_utf_value(constant_pool[attributo.attribute_name_index-1]);
 	printf("\n");
 }
 
 
 void imprime_acoes_navegacao_attributo() {
-    printf(("\n\n\n\t\t[-1]Voltar\n"));
+    printf(("\n\n\n\t\t(-1)Voltar\n\n\n"));
 }
 
 
 
-void navegacao_attribute_not_unknown(attribute_info atributo, constant constant_pool[]) {
+void navegacao_attribute_unknown(attribute_info atributo, int num_attr,constant constant_pool[]) {
     int acao;
 
     do {
         limpa_tela();
-        imprime_contexto_navegacao_attributo(atributo, constant_pool);
+        imprime_contexto_navegacao_attributo(atributo, num_attr,constant_pool);
         imprime_acoes_navegacao_attributo();
         imprime_generic_info_from_atribute(atributo, constant_pool);
-        printf("\n");
+        printf("\n\n");
 
-        acao = le_inteiro();
+        acao = solicita_inteiro();
 
 
     } while(acao != -1);
@@ -90,27 +90,29 @@ void imprime_specific_info_inner_class(attribute_info atributo, constant constan
 }
 
 void imprime_informacaoes_navegacao_inner_class(attribute_info atributo, constant constant_pool[]){
+    imprime_linha();
     imprime_generic_info_from_atribute(atributo, constant_pool);
+    imprime_linha();
     imprime_specific_info_inner_class(atributo, constant_pool);
     printf("\n");
     imprime_linha();
-    printf("\n");
+    imprime_linha();
+    printf("\n\n");
 }
 
 
 
 
-void navegacao_inner_classes(attribute_info atributo, constant constant_pool[]) {
+void navegacao_inner_classes(attribute_info atributo, int num_attr, constant constant_pool[]) {
     int acao;
 
     do {
         limpa_tela();
-        imprime_contexto_navegacao_attributo(atributo, constant_pool);
+        imprime_contexto_navegacao_attributo(atributo, num_attr, constant_pool);
         imprime_acoes_navegacao_attributo();
         imprime_informacaoes_navegacao_inner_class(atributo, constant_pool);
-        printf("\n");
 
-        acao = le_inteiro();
+        acao = solicita_inteiro();
 
 
     } while(acao != -1);
@@ -129,20 +131,20 @@ void imprime_info_source_file(attribute_info atributo, constant constant_pool[])
     imprime_specific_info_source_file(atributo, constant_pool);
     printf("\n");
     imprime_linha();
-    printf("\n");
+    printf("\n\n");
 }
 
 
-void navegacao_source_file(attribute_info atributo, constant constant_pool[]) {
+void navegacao_source_file(attribute_info atributo, int num_attr, constant constant_pool[]) {
     int acao;
 
     do {
         limpa_tela();
-        imprime_contexto_navegacao_attributo(atributo, constant_pool);
+        imprime_contexto_navegacao_attributo(atributo, num_attr, constant_pool);
         imprime_acoes_navegacao_attributo();
         imprime_info_source_file(atributo, constant_pool);
 
-        acao = le_inteiro();
+        acao = solicita_inteiro();
 
 
     } while(acao != -1);
@@ -153,18 +155,18 @@ void navegacao_source_file(attribute_info atributo, constant constant_pool[]) {
 void imprime_acoes_navegacao_attributes(attribute_info attributes[], u2 attributes_count, constant constant_pool[]) {
 	int i;
 	for(i = 0; i < attributes_count; i++) {
-		printf("\t[%d] ", i);
+		printf("\t(%d)", i);
 		imprime_constant_utf_value(constant_pool[attributes[i].attribute_name_index-1]);
 		printf("\n");
 	}
 
-	printf("\n\n\n\t[-1] Voltar\n");
+	printf("\n\n\n\t(-1) Voltar\n\n\n");
 }
 
 
 
 void imprime_contexto_navegacao_attributes() {
-    printf("Attributes\n");
+    printf("[6]Attributes\n");
 }
 
 void navega_nos_attributes(attribute_info attributes[], u2 attributes_count, constant constant_pool[]) {
@@ -174,7 +176,7 @@ void navega_nos_attributes(attribute_info attributes[], u2 attributes_count, con
         limpa_tela();
         imprime_contexto_navegacao_attributes();
         imprime_acoes_navegacao_attributes(attributes, attributes_count, constant_pool);
-        acao = le_inteiro();
+        acao = solicita_inteiro();
 
 		if (acao >= 0 && acao < attributes_count) {
 			attribute_info atributo = attributes[acao];
@@ -182,11 +184,11 @@ void navega_nos_attributes(attribute_info attributes[], u2 attributes_count, con
 			u2 length = constant_pool[atributo.attribute_name_index-1].u.Utf8.length;
 	
 			if(nome_u1_igual_string(name,"InnerClasses",length)) {
-                navegacao_inner_classes(atributo, constant_pool);
+                navegacao_inner_classes(atributo, acao, constant_pool);
 			} else if(nome_u1_igual_string(name,"SourceFile",length)) {
-                navegacao_source_file(atributo, constant_pool);		
+                navegacao_source_file(atributo, acao, constant_pool);		
 			} else {
-                navegacao_attribute_not_unknown(atributo, constant_pool); 
+                navegacao_attribute_unknown(atributo, acao, constant_pool); 
             }
 		}
 		

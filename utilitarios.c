@@ -54,11 +54,23 @@ void flush_in() {
 int le_inteiro() {
 	int inteiro;
 
-	scanf("%d", &inteiro);
+	while(scanf("%d", &inteiro) != 1) {
+		flush_in();
+	}
+
 	flush_in();
 
 	return inteiro;
 }
+
+
+int solicita_inteiro(){
+	printf("Digite o número da ação: \n");
+
+	return le_inteiro();
+}
+
+
 
 
 int menor(int i1, int i2) {
@@ -87,7 +99,7 @@ int tamanho_lexicografico_inteiro(int inteiro) {
 }
 
 void imprime_linha() {
-	printf("----------------------------------------------------------------------------");
+	printf("---------------------------------------------------------------------------------------------");
 }
 
 
@@ -145,7 +157,6 @@ void imprime_generic_info_from_atribute(attribute_info attr, constant constant_p
 	printf("\n");
 	printf("Atribute length: %d\n", attr.attribute_length);
 	imprime_linha();
-	printf("\n");
 }
 
 
