@@ -346,7 +346,7 @@ void imprime_tela_navegacao_inicial(constant constant_pool[], int constant_pool_
 	for(int posicao = 1;posicao < constant_pool_count;posicao++) {
 		printf("\t(%d)", posicao);
 		if(eh_posicao_invalida(constant_pool, posicao)){
-			printf("\tlarge numeric continued\n");
+			printf("large numeric continued\n");
 			continue;
 		}
 		switch(constant_pool[posicao-1].tag) {
