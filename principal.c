@@ -86,9 +86,17 @@ void imprime_acoes_contexto_principal() {
 	printf("(-1) Sair\n");
 }
 
-int main() {
+int main(int argc, char *argv[ ]) {
+	ClassFile *cf = le_class_file (argv[1]);
 
-	ClassFile *cf = le_class_file ("classes/TesteInnerClasses.class");
+
+	if(cf == NULL) {
+		printf("Falha na abertura do arquivo\n");
+		printf("Verifique se o nome ou caminho do arquivo está correto\n");
+		return 0;
+	}
+
+
 	int acao;
 
 	do {

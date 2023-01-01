@@ -277,6 +277,11 @@ field_info* le_fields(constant* constantPool,u2 length,FILE *fp) {
 
 ClassFile* le_class_file (char* arquivo_name) {
 	FILE *fp = fopen(arquivo_name,"rb");
+
+	if (fp == NULL){
+    	return NULL;
+	}
+
 	ClassFile *cf = (ClassFile *) malloc(sizeof(ClassFile)); 
 	cf->magic = u4Read(fp);
 	cf->minor_version = u2Read(fp);	

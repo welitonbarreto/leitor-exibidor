@@ -1,2 +1,6 @@
 gcc -std=c99  principal.c tipos.c -o s
 .\"principal.exe"
+
+Compilação para linux:
+gcc -std=c99 principal.c leitura.c liberacao_mem.c mapeamento_instrucoes_code.c funcoes_exibicao_code.c utilitarios.c impressao_constant_pool.c navegacao_methods.c impressao_interfaces.c navegacao_attributes.c navegacao_fields.c -o s
+

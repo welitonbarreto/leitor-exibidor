@@ -33,7 +33,7 @@ void imprime_nome_instrucao_e_deslocamento(u1* code, int n, int endereco_relativ
 	char sinal = endereco_relativo < 0 ? '-': '+';
 	
 	printf("%d ",n);
-	printf("%s %d (%c%d)\n", tabela_nomes_instrucoes[code[n]], destino, sinal, endereco_relativo);
+	printf("%s %d (%c%d)\n", tabela_nomes_instrucoes[code[n]], destino, sinal, abs(endereco_relativo));
 
 }
 
