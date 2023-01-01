@@ -301,7 +301,7 @@ void navegacao_code(attribute_info attr_code, u2 num_attr_code, method_info meto
 void imprime_informacoes_method(method_info method, u2 num_metodo, constant constant_pool[]) {
 	printf("\n");
 	imprime_linha();
-	printf("\nInformações do metodo\n");
+	printf("\nInformacoes do metodo\n");
 	printf("Name: cp_info #%d ", method.name_index);
 	imprime_campo_utf8_entre_colchetes(constant_pool,method.name_index);
 	printf("\nDescriptor cp_info: #%d ", method.descriptor_index);
