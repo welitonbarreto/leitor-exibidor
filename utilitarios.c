@@ -65,7 +65,7 @@ int le_inteiro() {
 
 
 int solicita_inteiro(){
-	printf("Digite o número da ação: \n");
+	printf("Digite o numero da acao: \n");
 
 	return le_inteiro();
 }

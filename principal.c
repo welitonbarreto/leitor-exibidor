@@ -92,7 +92,7 @@ int main(int argc, char *argv[ ]) {
 
 	if(cf == NULL) {
 		printf("Falha na abertura do arquivo\n");
-		printf("Verifique se o nome ou caminho do arquivo está correto\n");
+		printf("Verifique se o nome ou caminho do arquivo esta correto\n");
 		return 0;
 	}
 

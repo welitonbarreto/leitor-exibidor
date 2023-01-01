@@ -2,17 +2,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 void imprime_acoes_navegacao_interface() {
     printf("\n\n\n\t\t(-1) Voltar\n\n\n");
 }
