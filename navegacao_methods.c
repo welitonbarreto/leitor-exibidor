@@ -37,13 +37,16 @@ void imprime_descricao_method_flags(u2 access_flags) {
 
 void imprime_instrucoes_bytecodes(u1* code, u4 code_length, constant constant_pool[]){
 
+	funcao_exibidora** vetor_funcoes = gera_vetor_funcoes_exibidoras();	
+
 	int posicao = 0;
 	while(posicao <  code_length) {
-		funcao_exibidora** vetor_funcoes = gera_vetor_funcoes_exibidoras();	
+		
 		funcao_exibidora* funcao = vetor_funcoes[code[posicao]];
 		posicao = funcao(code, posicao, constant_pool);
 	}
 
+	free(vetor_funcoes);
 }
 
 void imprime_exception_table_from_method(exception* exception_table, u2 exception_table_length, constant constant_pool[]) {

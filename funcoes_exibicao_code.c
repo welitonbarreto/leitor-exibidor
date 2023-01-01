@@ -126,13 +126,20 @@ int exibidor_index_do_constant_pool_com_classe(u1* code, int n, constant constan
 int exibidor_metodo(u1* code, int n, constant constant_pool[]) {
 	printf("%d ",n);
 	printf("%s #%d ", tabela_nomes_instrucoes[code[n]],concatena_bytes(code[n+1],code[n+2]));
-	printf("<");
-	imprime_constant_method_class_name(constant_pool, concatena_bytes(code[n+1],code[n+2]));
-	printf(".");
-	imprime_constant_method_name(constant_pool, concatena_bytes(code[n+1],code[n+2]));
-	printf(" : ");
-	imprime_constant_method_descriptor(constant_pool, concatena_bytes(code[n+1],code[n+2]));
-	printf(">\n");
+
+
+	if(constant_pool[concatena_bytes(code[n+1],code[n+2])-1].tag != CONSTANT_InvokeDynamic) {
+		printf("<");
+		imprime_constant_method_class_name(constant_pool, concatena_bytes(code[n+1],code[n+2]));
+		printf(".");
+		imprime_constant_method_name(constant_pool, concatena_bytes(code[n+1],code[n+2]));
+		printf(" : ");
+		imprime_constant_method_descriptor(constant_pool, concatena_bytes(code[n+1],code[n+2]));
+		printf(">");
+	}
+
+	printf("\n");
+
 	return n+3;
 }
 
