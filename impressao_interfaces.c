@@ -8,7 +8,7 @@ void imprime_acoes_navegacao_interface() {
 
 void imprime_informacoes_interface(u2 interface, constant constant_pool[]){
     imprime_linha();
-    printf("\nInformações da interface\n");
+    printf("\nInformacoes da interface\n");
     printf("Interface: cp_info#%d <", interface);
     imprime_constant_class(constant_pool, interface);
     printf(">\n");

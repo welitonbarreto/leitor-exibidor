@@ -22,7 +22,7 @@ void imprime_descricao_field_flag(u2 access_flags) {
 
 void imprime_informacoes_navegacao_field(field_info field, u2 num_field, constant constant_pool[]) {
     imprime_linha();
-	printf("\nInformações do field\n");
+	printf("\nInformacoes do field\n");
 	printf("Name: cp_info #%d ", field.name_index);
 	imprime_campo_utf8_entre_colchetes(constant_pool,field.name_index);
 	printf("\nDescriptor cp_info: #%d ", field.descriptor_index);
